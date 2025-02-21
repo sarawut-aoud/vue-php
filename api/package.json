@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@tensorflow/tfjs-backend-wasm": "^4.2.0",
+    "notivue": "^2.4.5"
+  }
+}
