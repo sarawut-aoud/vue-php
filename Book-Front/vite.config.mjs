@@ -33,7 +33,7 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/myvueapp/',
+  base: '/reread/',
   // root: './src', // กำหนด root ใหม่
   build: {
     outDir: '../dist', // ย้ายออกไปนอก src
@@ -55,7 +55,16 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    proxy: {
+      '/api': { // ใช้ /api เป็น prefix ในการ proxy
+        target: 'http://127.0.0.1/bookshop/api/', // URL ของ backend
+        changeOrigin: true,
+        secure: false, // ปิดการตรวจสอบ SSL
+        rewrite: (path) => path.replace(/^\/api/, ''), // ตัด /api ออก
+      }
+    }
   },
+ 
   css: {
     preprocessorOptions: {
       sass: {

@@ -7,5 +7,48 @@
 </template>
 
 <script setup>
-  //
+import {ref,provide,onMounted} from 'vue';
+import { useJWT } from './composables/useJWT';
+import { useCookie } from './composables/useCookie';
+import api from '/utils/axios';
+const {getCookie} = useCookie();
+const {getItem} = useJWT();
+const globalitem = ref(getItem(getCookie('jwt')));
+const info = ref('');
+provide('_info', info);
+const getInfo= async()=>{
+  if(!globalitem.value) return false
+  let {data} = await api({
+    method:'get',
+    url:"/api/Personal/getInfo",
+    params:{
+      uid:globalitem.value?.ui
+    }
+  })
+  if(data?.data){
+    info.value = data.data
+  }
+
+};
+
+onMounted(()=>{
+  getInfo()
+})
 </script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap');
+
+* {
+  font-family: "Noto Sans Thai", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+[aria-label="Notifications"] {
+  z-index: 3000 !important;
+  position: relative;
+  /* หรือ absolute/fixed ถ้าจำเป็น */
+}
+</style>

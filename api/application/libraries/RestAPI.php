@@ -39,8 +39,8 @@ class RestAPI extends REST_Controller
         try {
             $input = $this->input->request_headers();
             // $header = $input ?? $payload;
-            $bearer = $input['Authorization'];
-            $xapikey = $input['X-API-KEY'];
+            $bearer = $input['authorization'];
+            $xapikey = $input['x-api-key'];
             if (!empty($bearer)) {
                 if (preg_match('/Bearer\s(\S+)/', $bearer, $matches)) {
                     $token = $matches[1];
@@ -59,8 +59,9 @@ class RestAPI extends REST_Controller
                 ]);
                 exit(1);
             }
+
+            $exist = $this->db->query('SELECT * FROM db_reread.api_users a WHERE a.token = ? AND a.expired_date >= CURRENT_TIMESTAMP() ', [$token])->row();
           
-            $exist = $this->db->query('SELECT * FROM geerang_gts.api_users a WHERE a.token = ? AND a.expired_date >= CURRENT_TIMESTAMP() AND a.is_active = 1', [$token])->row();
             if (!$exist) {
                 $this->response(['msg' => 'Unauthentication'], 401);
                 header('Content-Type: application/json');
@@ -125,9 +126,9 @@ class RestAPI extends REST_Controller
                 $valid[] = "Please input {$rule[1]}";
                 continue;
             }
-            if(in_array('optional', $rules)) {
+            if (in_array('optional', $rules)) {
                 $_data = $this->input->post($rule[0]) ?? $this->input->get($rule[0]);
-                if(!$_data) continue;
+                if (!$_data) continue;
             }
             foreach ($rules as $key => $_r) {
                 $_val = explode(':', $_r);
@@ -239,5 +240,4 @@ class RestAPI extends REST_Controller
             }
         }
     }
-  
 }

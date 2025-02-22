@@ -146,33 +146,9 @@ $active_group = 'default';
 define("DBSET", 0);
 
 switch (DBSET) {
-    case 1: {
-            $hostname = '45.144.164.175';
-            $DB_NAME = 'geerang_gts';
-            $DB_USER = "uat";
-            $DB_PASS = 'UATGeerang@2024';
-            $mysql_port = '4407';
-            break;
-        }
-    case 2: {
-            $hostname = '45.144.164.175';
-            $DB_NAME = 'geerang_gts';
-            $DB_USER = "dev";
-            $DB_PASS = 'DEVGeerang@2024';
-            $mysql_port = '4406';
-            break;
-        }
-    case 3: {
-            $hostname = '203.170.190.122';
-            $DB_NAME = 'geerang_gts';
-            $DB_USER = "geerang_sarawut";
-            $DB_PASS = '!Sarawut@0979284920';
-            $mysql_port = '3306';
-            break;
-        }
     default: {
             $hostname = "localhost";
-            $DB_NAME = 'geerang_gts';
+            $DB_NAME = 'db_reread';
             $DB_USER = "root";
             $DB_PASS = '';
             $mysql_port = '3306';

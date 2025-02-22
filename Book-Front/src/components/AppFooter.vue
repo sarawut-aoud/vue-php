@@ -1,11 +1,11 @@
 <template>
-  <h1>11111</h1>
+  <v-footer border>
+    <div class=" w-100 d-flex justify-end">
+      2025 — Vuetify, LLC
+    </div>
+  </v-footer>
 </template>
 
 <script setup>
 
 </script>
-
-<style scoped lang="sass">
-
-</style>
