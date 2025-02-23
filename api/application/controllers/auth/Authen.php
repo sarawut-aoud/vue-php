@@ -39,7 +39,7 @@ class Authen extends RestAPI
             if ($valid) self::setErr($valid, 403);
             $exist = $this->db->query("SELECT * FROM db_reread.api_users a
             LEFT JOIN db_reread.personaldocument b ON b.pd_id = a.pd_id
-            WHERE b.email = ?
+            WHERE b.username = ?
             ", [$payload->email])->row();
 
             if (!password_verify(encrypt_md5_salt($payload->password), $exist->password)) {
@@ -101,6 +101,7 @@ class Authen extends RestAPI
 
             $this->db->insert('db_reread.personaldocument', [
                 'email' => $email,
+                'username' => $email,
                 'first_name' => $username,
                 'password' => pass_secure_hash($password),
             ]);

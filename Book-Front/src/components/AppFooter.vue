@@ -1,7 +1,7 @@
 <template>
   <v-footer border>
     <div class=" w-100 d-flex justify-end">
-      2025 — Vuetify, LLC
+      2025 — Reread Shop
     </div>
   </v-footer>
 </template>

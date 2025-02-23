@@ -1,8 +1,11 @@
 <template>
     <v-app-bar scroll-behavior="inverted" class="pa-2 position-fixed">
         <v-app-bar-title>
-            <a href="/" class="text-decoration-none "
-                :class="{ 'text-grey-darken-4': (!themes || themes == 'light'), 'text-white': themes == 'dark' }">Reread</a>
+            <Router-custom :theme="themes" :path="'/'">
+                <template #default>
+                    Reread
+                </template>
+            </Router-custom>
         </v-app-bar-title>
         <div class="me-2 d-flex ga-4 align-center">
             <template v-if="!is_login">
@@ -23,8 +26,12 @@
                         <v-list>
                             <div class="d-flex flex-column ga-2 w-100">
                                 <v-list-item>
-                                    <v-btn href="users/info" variant="outlined" class="d-flex justify-start w-100"
-                                        rounded="lg" prepend-icon="mdi-account-circle">ข้อมูลส่วนตัว</v-btn>
+                                    <Router-custom :theme="themes" :path="'/users/info'">
+                                        <template #default>
+                                            <v-btn variant="outlined" class="d-flex justify-start w-100" rounded="lg"
+                                                prepend-icon="mdi-account-circle">ข้อมูลส่วนตัว</v-btn>
+                                        </template>
+                                    </Router-custom>
                                 </v-list-item>
 
                                 <v-list-item>

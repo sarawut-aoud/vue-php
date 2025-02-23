@@ -30,6 +30,7 @@ const getInfo= async()=>{
   }
 
 };
+provide("_getInfo",getInfo)
 
 onMounted(()=>{
   getInfo()
