@@ -45,7 +45,7 @@ class Authen extends RestAPI
             if (!password_verify(encrypt_md5_salt($payload->password), $exist->password)) {
                 self::setErr('Not found user', 404);
             }
-            $jwt = self::setJWT($exist->pd_id);
+            $jwt = self::setJWT($exist->pd_id, $exist->user_type);
 
             self::setRes([
                 'token_key' => $exist->token,
@@ -134,13 +134,13 @@ class Authen extends RestAPI
             self::sendResponse($e, __METHOD__);
         }
     }
-    private function setJWT($pd_id)
+    private function setJWT($pd_id, $user_type = 1)
     {
         $this->load->library('Authen_Jwt');
 
         $payload = [
             'ui' =>  $pd_id,
-            'n' => 'emp',
+            'n' => $user_type == 9 ? 'admin' : 'emp',
             'cut' => strtotime(date('d-m-Y H:i:s')),
             'exp' => strtotime('+1 day', time())
         ];

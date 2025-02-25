@@ -1,5 +1,5 @@
 <template>
-    <v-card title="ผู้ใช้งาน" solo border rounded="lg">
+    <v-card title="ออเดอร์" solo border rounded="lg">
         <v-card-text>
             <template v-slot:text>
                 <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined"

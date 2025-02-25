@@ -11,7 +11,7 @@ import { useJWT } from '@/composables/useJWT';
 import {ref} from 'vue';
 
 import { createRouter, createWebHistory } from 'vue-router/auto'
-import AdminUsers from '@/pages/admin/users.vue';
+import AdminUsers from '@/pages/admin/index.vue';
 import Login from '@/pages/auth/index.vue';
 import Index from '@/pages/index.vue';
 import Register from '@/pages/auth/register.vue';
@@ -48,12 +48,7 @@ const router = createRouter({
       meta: { requiresAuth: true ,role:'emp'} // 🟢 Public Route
     },
     {
-      path:'/admin',
-      children: [
-        { path: 'users', component:AdminUsers },
-        // { path: 'users', component:  },
-        // { path: 'users/:id', component:  },
-      ], 
+      path:'/admin',component:AdminUsers,
       meta: { requiresAuth: true ,role:'admin'} // 🟢 Public Route
     }
   ],

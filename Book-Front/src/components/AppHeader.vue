@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar scroll-behavior="inverted" class="pa-2 position-fixed">
+    <v-app-bar>
         <v-app-bar-title>
             <Router-custom :theme="themes" :path="'/'">
                 <template #default>
@@ -25,7 +25,7 @@
                     <v-card min-width="250" rounded="lg">
                         <v-list>
                             <div class="d-flex flex-column ga-2 w-100">
-                                <v-list-item>
+                                <v-list-item v-if="!globalitem || globalitem.n != 'admin'">
                                     <Router-custom :theme="themes" :path="'/users/info'">
                                         <template #default>
                                             <v-btn variant="outlined" class="d-flex justify-start w-100" rounded="lg"
@@ -34,7 +34,7 @@
                                     </Router-custom>
                                 </v-list-item>
 
-                                <v-list-item>
+                                <v-list-item v-if="!globalitem || globalitem.n != 'admin'">
                                     <v-btn variant="outlined" class="d-flex justify-start w-100" rounded="lg"
                                         prepend-icon="mdi-clipboard-text-clock">ประวัติการสั่งซื้อ</v-btn>
                                 </v-list-item>
@@ -58,12 +58,14 @@
                     </v-card>
                 </v-menu>
             </template>
-            <v-divider vertical></v-divider>
-            <div>
-                <v-badge :content="5" color="red">
-                    <v-btn border icon="mdi-cart" @click="carts = !carts"></v-btn>
-                </v-badge>
-            </div>
+            <template v-if="!globalitem || globalitem.n != 'admin'">
+                <v-divider vertical></v-divider>
+                <div>
+                    <v-badge :content="5" color="red">
+                        <v-btn border icon="mdi-cart" @click="carts = !carts"></v-btn>
+                    </v-badge>
+                </div>
+            </template>
         </div>
     </v-app-bar>
     <Carts-items :carts="carts"></Carts-items>
@@ -76,7 +78,6 @@ import { ref,inject, } from 'vue'
 import CartsItems from '@/components/CartsItems.vue';
 import {useLocalStorage} from '@/composables/useLocalStorage';
 import {useCookie} from '@/composables/useCookie';
-
 import { Notivue, Notification, push } from 'notivue'
 
 const emit = defineEmits(['themes']);
@@ -85,16 +86,12 @@ const item_info = inject('_info');
 const themes = ref('light');
 let temp = isItem('userToken')?true:false;
 const {  deleteCookie } = useCookie();
-
+import { useJWT } from '@/composables/useJWT';
+const {getItem} = useJWT();
+const { getCookie } = useCookie();
+const globalitem = ref(getItem(getCookie('jwt')));
 const is_login = ref(temp)
 const carts = ref(false)
-const show = ref(false)
-const items = ref([
-        { text: 'Real-Time', icon: 'mdi-clock' },
-        { text: 'Audience', icon: 'mdi-account' },
-        { text: 'Conversions', icon: 'mdi-flag' },
-      ])
-
 const logout= async()=>{
     push.success({
             position: 'top-right',

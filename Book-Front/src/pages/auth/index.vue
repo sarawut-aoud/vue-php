@@ -72,7 +72,6 @@ let handleSubmit = async () => {
             setTimeout(() => {
               const url = 'admin';
               const role =  getItem((data?.data?.jwt))
-              console.log(role);
                 window.location.href = role.n=='emp'?'/':url
             }, 3000);
         }else{
