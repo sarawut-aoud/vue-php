@@ -44,4 +44,69 @@ class Category extends RestAPI
             self::sendResponse($e, __METHOD__);
         }
     }
+    public function remove_post($id)
+    {
+        try {
+
+            if (!$id) self::setRes("INPUT ERROR", 401);
+            $result = $this->db->query("SELECT * FROM db_reread.category WHERE is_active = 1 AND id = ?", [$id])->row();
+            if (!$result)  self::setRes("NOT FOUND", 404);
+            $this->db->update('db_reread.category', ['is_active' => 0], ['id' => $id]);
+            self::setRes("SUCCESS", 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
+    public function update_post()
+    {
+        try {
+            $req = (object) $this->input->post();
+            $exit = $this->db->query("SELECT * FROM db_reread.category WHERE id = ? AND is_active =1 ", [$req->id])->row();
+            if (!$exit) self::setRes("NOT FOUND", 404);
+
+            $exit = $this->db->query("SELECT * FROM db_reread.category WHERE cate_name = ? AND is_active =1 AND id != ?", [$req->name, $req->id])->row();
+            if ($exit) self::setRes("Category Name Not Dupilcate", 404);
+            $this->db->update('db_reread.category', [
+                'cate_name' => $req->name,
+                'cate_no' => $req->no
+            ], ['id' => $req->id]);
+            self::setRes("SUCCESS", 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
+    public function create_post()
+    {
+        try {
+            $req = (object) $this->input->post();
+
+            $exit = $this->db->query("SELECT * FROM db_reread.category WHERE cate_name = ? AND is_active =1 ", [$req->name])->row();
+            if ($exit) self::setRes("Category Name Not Dupilcate", 404);
+            $this->db->insert('db_reread.category', [
+                'cate_name' => $req->name,
+                'cate_no' => $req->no
+            ]);
+            self::setRes("SUCCESS", 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
+    public function getListById_get($id)
+    {
+        try {
+
+            if (!$id) self::setRes("INPUT ERROR", 401);
+            $result = $this->db->query("SELECT * FROM db_reread.category WHERE is_active = 1 AND id = ?", [$id])->row();
+            if (!$result)  self::setRes("NOT FOUND", 404);
+            $data =
+                [
+                    "_i" => (int) $result->id,
+                    'name' => $result->cate_name,
+                    'no' => $result->cate_no,
+                ];
+            self::setRes($data, 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
 }
