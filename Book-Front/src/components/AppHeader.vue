@@ -1,7 +1,7 @@
 <template>
     <v-app-bar>
         <v-app-bar-title>
-            <Router-custom :theme="themes" :path="'/'">
+            <Router-custom :theme="themes" :path="'/reread'">
                 <template #default>
                     Reread
                 </template>

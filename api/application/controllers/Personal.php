@@ -33,7 +33,7 @@ class Personal extends RestAPI
 
             if (!$req->uid) self::setErr("Require Uid", 401);
 
-            $exit = $this->db->query("SELECT * FROM db_reread.personaldocument WHERE pd_id=?", [$req->uid])->row();
+            $exit = $this->db->query("SELECT * FROM swtar_reread.personaldocument WHERE pd_id=?", [$req->uid])->row();
             if (!$exit) self::setErr("NOT FOUND User", 404);
             $result = [
                 '_i' => (int) $exit->pd_id,
@@ -62,7 +62,7 @@ class Personal extends RestAPI
     public function getGender_get()
     {
         try {
-            $result = $this->db->query("SELECT * FROM db_reread.gender")->result();
+            $result = $this->db->query("SELECT * FROM swtar_reread.gender")->result();
             $result = array_map(function ($e) {
                 return [
                     '_i' => (int) $e->gender_id,
@@ -79,10 +79,10 @@ class Personal extends RestAPI
         try {
             $req = (object) $this->input->post();
 
-            $exit = $this->db->query("SELECT * FROM db_reread.personaldocument WHERE pd_id=?", [$req->pd_id])->row();
+            $exit = $this->db->query("SELECT * FROM swtar_reread.personaldocument WHERE pd_id=?", [$req->pd_id])->row();
             if (!$exit) self::setErr("NOT FOUND User", 404);
 
-            $this->db->update('db_reread.personaldocument', [
+            $this->db->update('swtar_reread.personaldocument', [
                 'first_name' => $req->first_name ?? null,
                 'last_name' => $req->last_name ?? null,
                 'id_card' => $req->id_card ?? null,

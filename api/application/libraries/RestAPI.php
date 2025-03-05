@@ -46,7 +46,7 @@ class RestAPI extends REST_Controller
                     $token = $matches[1];
                 }
             }
-         
+           
             if ((!$token || !$bearer) || ($xapikey && $bearer)) {
                 $this->response(['msg' => 'Unauthentication'], 401);
                 header('Content-Type: application/json');
@@ -60,8 +60,8 @@ class RestAPI extends REST_Controller
                 exit(1);
             }
 
-            $exist = $this->db->query('SELECT * FROM db_reread.api_users a WHERE a.token = ? AND a.expired_date >= CURRENT_TIMESTAMP() ', [$token])->row();
-          
+            $exist = $this->db->query('SELECT * FROM swtar_reread.api_users a WHERE a.token = ? AND a.expired_date >= CURRENT_TIMESTAMP() ', [$token])->row();
+
             if (!$exist) {
                 $this->response(['msg' => 'Unauthentication'], 401);
                 header('Content-Type: application/json');

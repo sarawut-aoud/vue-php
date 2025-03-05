@@ -30,7 +30,7 @@ class Category extends RestAPI
     {
         try {
 
-            $result = $this->db->query("SELECT * FROM db_reread.category WHERE is_active = 1 ")->result();
+            $result = $this->db->query("SELECT * FROM swtar_reread.category WHERE is_active = 1 ")->result();
 
             $result = array_map(function ($e) {
                 return [
@@ -49,9 +49,9 @@ class Category extends RestAPI
         try {
 
             if (!$id) self::setRes("INPUT ERROR", 401);
-            $result = $this->db->query("SELECT * FROM db_reread.category WHERE is_active = 1 AND id = ?", [$id])->row();
+            $result = $this->db->query("SELECT * FROM swtar_reread.category WHERE is_active = 1 AND id = ?", [$id])->row();
             if (!$result)  self::setRes("NOT FOUND", 404);
-            $this->db->update('db_reread.category', ['is_active' => 0], ['id' => $id]);
+            $this->db->update('swtar_reread.category', ['is_active' => 0], ['id' => $id]);
             self::setRes("SUCCESS", 200);
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);
@@ -61,12 +61,12 @@ class Category extends RestAPI
     {
         try {
             $req = (object) $this->input->post();
-            $exit = $this->db->query("SELECT * FROM db_reread.category WHERE id = ? AND is_active =1 ", [$req->id])->row();
+            $exit = $this->db->query("SELECT * FROM swtar_reread.category WHERE id = ? AND is_active =1 ", [$req->id])->row();
             if (!$exit) self::setRes("NOT FOUND", 404);
 
-            $exit = $this->db->query("SELECT * FROM db_reread.category WHERE cate_name = ? AND is_active =1 AND id != ?", [$req->name, $req->id])->row();
+            $exit = $this->db->query("SELECT * FROM swtar_reread.category WHERE cate_name = ? AND is_active =1 AND id != ?", [$req->name, $req->id])->row();
             if ($exit) self::setRes("Category Name Not Dupilcate", 404);
-            $this->db->update('db_reread.category', [
+            $this->db->update('swtar_reread.category', [
                 'cate_name' => $req->name,
                 'cate_no' => $req->no
             ], ['id' => $req->id]);
@@ -80,9 +80,9 @@ class Category extends RestAPI
         try {
             $req = (object) $this->input->post();
 
-            $exit = $this->db->query("SELECT * FROM db_reread.category WHERE cate_name = ? AND is_active =1 ", [$req->name])->row();
+            $exit = $this->db->query("SELECT * FROM swtar_reread.category WHERE cate_name = ? AND is_active =1 ", [$req->name])->row();
             if ($exit) self::setRes("Category Name Not Dupilcate", 404);
-            $this->db->insert('db_reread.category', [
+            $this->db->insert('swtar_reread.category', [
                 'cate_name' => $req->name,
                 'cate_no' => $req->no
             ]);
@@ -96,7 +96,7 @@ class Category extends RestAPI
         try {
 
             if (!$id) self::setRes("INPUT ERROR", 401);
-            $result = $this->db->query("SELECT * FROM db_reread.category WHERE is_active = 1 AND id = ?", [$id])->row();
+            $result = $this->db->query("SELECT * FROM swtar_reread.category WHERE is_active = 1 AND id = ?", [$id])->row();
             if (!$result)  self::setRes("NOT FOUND", 404);
             $data =
                 [

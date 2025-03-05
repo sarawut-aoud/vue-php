@@ -1,13 +1,5 @@
 <template>
     <div class="d-flex flex-column ga-2 w-100 align-center">
-        <div class="w-100 d-flex align-center ga-2">
-            <v-card class="w-100" title="ราคาหนังสือ" solo border rounded="lg">
-
-            </v-card>
-            <v-card class="w-100" title="ราคาหนังสือ" solo border rounded="lg">
-
-            </v-card>
-        </div>
         <div class="w-100">
             <v-card title="หนังสือ" solo border rounded="lg">
                 <v-card-text>

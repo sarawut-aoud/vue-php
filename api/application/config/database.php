@@ -148,7 +148,7 @@ define("DBSET", 0);
 switch (DBSET) {
     default: {
             $hostname = "localhost";
-            $DB_NAME = 'db_reread';
+            $DB_NAME = 'swtar_reread';
             $DB_USER = "root";
             $DB_PASS = '';
             $mysql_port = '3306';

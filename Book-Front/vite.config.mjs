@@ -33,7 +33,7 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/reread/',
+  base: '/',
   // root: './src', // กำหนด root ใหม่
   build: {
     outDir: '../dist', // ย้ายออกไปนอก src

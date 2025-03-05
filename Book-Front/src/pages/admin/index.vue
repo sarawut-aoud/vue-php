@@ -6,26 +6,26 @@
       <v-navigation-drawer theme="dark" permanent floating absolute>
         <v-list v-model="tabmenu" density="compact" nav>
           <v-list-subheader>MENU</v-list-subheader>
-          <v-list-item @click="updateModel('dashboard')" :active="tabmenu=='dashboard'" prepend-icon="mdi-view-dashboard" title="Dashboard"
-            value="dashboard"></v-list-item>
-          <v-list-item @click="updateModel('users')" prepend-icon="mdi-account-group" title="ผู้ใช้งาน"
-            value="users"></v-list-item>
-          <v-list-item @click="updateModel('orders')" prepend-icon="mdi-order-bool-descending-variant" title="ออเดอร์"
-            value="orders"></v-list-item>
+          <v-list-item @click="updateModel('dashboard')" :active="tabmenu == 'dashboard'"
+            prepend-icon="mdi-view-dashboard" title="Dashboard" value="dashboard"></v-list-item>
+          <v-list-item @click="updateModel('users')" :active="tabmenu == 'users'" prepend-icon="mdi-account-group"
+            title="ผู้ใช้งาน" value="users"></v-list-item>
+          <v-list-item @click="updateModel('orders')" :active="tabmenu == 'orders'"
+            prepend-icon="mdi-order-bool-descending-variant" title="ออเดอร์" value="orders"></v-list-item>
           <v-divider class="mt-5"></v-divider>
           <v-list-subheader>Mangement</v-list-subheader>
-          <v-list-item @click="updateModel('category')" prepend-icon="mdi-archive-outline" title="หมวดหมู่หนังสือ"
-            value="category"></v-list-item>
-          <v-list-item @click="updateModel('products')" prepend-icon="mdi-book-open-variant" title="หนังสือ"
-            value="products"></v-list-item>
-          <v-list-item @click="updateModel('setting')" prepend-icon="mdi-cog" title="ตั้งค่าการชำระเงิน"
-            value="setting"></v-list-item>
+          <v-list-item @click="updateModel('category')" :active="tabmenu == 'category'"
+            prepend-icon="mdi-archive-outline" title="หมวดหมู่หนังสือ" value="category"></v-list-item>
+          <v-list-item @click="updateModel('products')" :active="tabmenu == 'products'"
+            prepend-icon="mdi-book-open-variant" title="หนังสือ" value="products"></v-list-item>
+          <v-list-item @click="updateModel('setting')" :active="tabmenu=='setting'" prepend-icon=" mdi-cog"
+            title="ตั้งค่าการชำระเงิน" value="setting"></v-list-item>
           <v-divider class="mt-5"></v-divider>
           <v-list-subheader>Report</v-list-subheader>
-          <v-list-item @click="updateModel('report_day')" prepend-icon="mdi-file" title="สรุปยอด วันนี้"
-            value="report_day"></v-list-item>
-          <v-list-item @click="updateModel('summary')" prepend-icon="mdi-file" title="สรุปยอด วัน/เดือน/ปี"
-            value="summary"></v-list-item>
+          <v-list-item @click="updateModel('report_day')" :active="tabmenu == 'report_day'" prepend-icon="mdi-file"
+            title="สรุปยอด วันนี้" value="report_day"></v-list-item>
+          <v-list-item @click="updateModel('summary')" :active="tabmenu == 'summary'" prepend-icon="mdi-file"
+            title="สรุปยอด วัน/เดือน/ปี" value="summary"></v-list-item>
         </v-list>
       </v-navigation-drawer>
       <v-main>
@@ -84,7 +84,7 @@ import report_summaryVue from './report_summary.vue';
 
 
 const {getItem} = useJWT();
-const { getCookie } = useCookie();
+const { getCookie ,setCookie } = useCookie();
 
 const theme = ref('light');
 const getTheme=(e)=>{
@@ -95,8 +95,13 @@ const tabmenu = ref('dashboard');
 const updateModel = (value)=>{
   loadingPage.value = true;
   tabmenu.value= value
+  setCookie('tabmenu',value)
   setTimeout(() => {
     loadingPage.value = false
   }, 1000);
 };
+onMounted(()=>{
+  let tab = getCookie('tabmenu')
+  if(tab)tabmenu.value= tab;
+})
 </script>

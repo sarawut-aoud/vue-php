@@ -33,12 +33,12 @@ class Authen extends RestAPI
             $payload = (object)$this->input->post();
             $valid = self::validPayload(
                 $payload,
-                ['email', 'Email', 'required|min:6|max:40'],
+                ['email', 'Email', 'required|min:2|max:40'],
                 ['password', 'Password', 'required'],
             );
             if ($valid) self::setErr($valid, 403);
-            $exist = $this->db->query("SELECT * FROM db_reread.api_users a
-            LEFT JOIN db_reread.personaldocument b ON b.pd_id = a.pd_id
+            $exist = $this->db->query("SELECT * FROM swtar_reread.api_users a
+            LEFT JOIN swtar_reread.personaldocument b ON b.pd_id = a.pd_id
             WHERE b.username = ?
             ", [$payload->email])->row();
 
@@ -66,7 +66,7 @@ class Authen extends RestAPI
             );
             if ($valid) self::setErr($valid, 403);
 
-            $exist = $this->db->query("SELECT * FROM db_reread.api_users a WHERE a.token = ?", trim($payload->token))->row();
+            $exist = $this->db->query("SELECT * FROM swtar_reread.api_users a WHERE a.token = ?", trim($payload->token))->row();
             if (!$exist) self::setErr('Not found client', 404);
 
             self::setRes([
@@ -94,12 +94,12 @@ class Authen extends RestAPI
             if (!$password) $valid[] = 'Please input Password';
 
             if ($valid) self::setErr($valid, 403);
-            $exist = $this->db->query("SELECT * FROM db_reread.api_users a WHERE a.username = ?", $username)->row();
+            $exist = $this->db->query("SELECT * FROM swtar_reread.api_users a WHERE a.username = ?", $username)->row();
             if ($exist) self::setErr('Sorry, Username is unavailable', 403);
 
             $password = encrypt_md5_salt($password);
 
-            $this->db->insert('db_reread.personaldocument', [
+            $this->db->insert('swtar_reread.personaldocument', [
                 'email' => $email,
                 'username' => $email,
                 'first_name' => $username,
@@ -111,7 +111,7 @@ class Authen extends RestAPI
             $secret_key = $this->encryption->encrypt($password);
             $token = base64_encode($api_key . ':' . $secret_key);
 
-            $this->db->insert('db_reread.api_users', [
+            $this->db->insert('swtar_reread.api_users', [
                 'pd_id' => $last_id,
                 'username' => $username,
                 'password' => $password,
@@ -146,7 +146,7 @@ class Authen extends RestAPI
         ];
 
         $jwt = $this->authen_jwt->generateToken($payload);
-        $this->db->insert('db_reread.users_token', [
+        $this->db->insert('swtar_reread.users_token', [
             'user_id' => $payload['ui'],
             'login_type' => $payload['n'],
             'expired_at' => date('Y-m-d H:i:s', $payload['exp']),

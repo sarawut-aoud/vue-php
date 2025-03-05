@@ -25,7 +25,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes:[
     {
-      path:'',
+      path:'/',
       component:Index,
       name:"Home"
     },
@@ -58,9 +58,9 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth) {
     if (!userRole) {
-      next({ name: '' }); // ❌ ไม่ได้ Login
+      next({ name: 'Home' }); // ❌ ไม่ได้ Login
     } else if (to.meta.role && to.meta.role !== userRole) {
-      next({ name: '' }); // ❌ Role ไม่ตรง
+      next({ name: 'Home' }); // ❌ Role ไม่ตรง
     } else {
       next(); // ✅ ผ่านได้
     }

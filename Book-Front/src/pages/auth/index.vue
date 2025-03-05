@@ -3,7 +3,7 @@
     <v-card class="mx-auto pa-12 pb-8" width="800" elevation="8" max-width="448" rounded="lg" variant="elevated"
       color="white">
       <div class="text-subtitle-1 text-medium-emphasis"> อีเมล *</div>
-      <v-text-field v-model="email" density="compact" placeholder="Email" prepend-inner-icon="mdi-email-outline"
+      <v-text-field v-model="email" @keypress="keyEnter" density="compact" placeholder="Email" prepend-inner-icon="mdi-email-outline"
         variant="outlined"></v-text-field>
 
       <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
