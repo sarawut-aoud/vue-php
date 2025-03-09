@@ -5,7 +5,6 @@
     </v-main>
   </v-app>
 </template>
-
 <script setup>
 import {ref,provide,onMounted} from 'vue';
 import { useJWT } from './composables/useJWT';

@@ -47,7 +47,7 @@ class Category extends RestAPI
     public function remove_post($id)
     {
         try {
-
+            $this->validateAuth();
             if (!$id) self::setRes("INPUT ERROR", 401);
             $result = $this->db->query("SELECT * FROM swtar_reread.category WHERE is_active = 1 AND id = ?", [$id])->row();
             if (!$result)  self::setRes("NOT FOUND", 404);
@@ -60,6 +60,7 @@ class Category extends RestAPI
     public function update_post()
     {
         try {
+            $this->validateAuth();
             $req = (object) $this->input->post();
             $exit = $this->db->query("SELECT * FROM swtar_reread.category WHERE id = ? AND is_active =1 ", [$req->id])->row();
             if (!$exit) self::setRes("NOT FOUND", 404);
@@ -78,6 +79,7 @@ class Category extends RestAPI
     public function create_post()
     {
         try {
+            $this->validateAuth();
             $req = (object) $this->input->post();
 
             $exit = $this->db->query("SELECT * FROM swtar_reread.category WHERE cate_name = ? AND is_active =1 ", [$req->name])->row();
@@ -94,7 +96,7 @@ class Category extends RestAPI
     public function getListById_get($id)
     {
         try {
-
+            $this->validateAuth();
             if (!$id) self::setRes("INPUT ERROR", 401);
             $result = $this->db->query("SELECT * FROM swtar_reread.category WHERE is_active = 1 AND id = ?", [$id])->row();
             if (!$result)  self::setRes("NOT FOUND", 404);

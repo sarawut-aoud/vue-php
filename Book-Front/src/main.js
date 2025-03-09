@@ -23,7 +23,7 @@ const notivue = createNotivue({
     avoidDuplicates: true,
     notifications: {
       global: {
-        duration: 10000
+        duration: 5000
       }
     }
 })
