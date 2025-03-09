@@ -1,10 +1,10 @@
 <template>
   <v-app-bar>
-    <v-app-bar-title style="margin-inline-start:0 !important">
+    <v-app-bar-title style="margin-inline-start: 0 !important">
       <Router-custom :theme="themes" :path="'/'">
         <template #default>
-          <div class="d-flex ga-3 align-center ">
-            <v-img :src="'/api/assets/images/logo_1.jpg'"  style="width:8%;"></v-img>
+          <div class="d-flex ga-3 align-center">
+            <v-img :src="'/api/assets/images/logo_1.jpg'" style="width: 8%"></v-img>
             <div class="w-100">Reread</div>
           </div>
         </template>
@@ -33,7 +33,7 @@
           <v-card min-width="250" rounded="lg">
             <v-list>
               <div class="d-flex flex-column ga-2 w-100">
-                <v-list-item v-if="!globalitem || globalitem.n != 'admin'">
+                <v-list-item v-if="!!globalitem || globalitem.n != 'admin'">
                   <Router-custom :theme="themes" :path="'/users/info'">
                     <template #default>
                       <v-btn
@@ -47,7 +47,7 @@
                   </Router-custom>
                 </v-list-item>
 
-                <v-list-item v-if="!globalitem || globalitem.n != 'admin'">
+                <v-list-item v-if="!!globalitem || globalitem.n != 'admin'">
                   <v-btn
                     variant="outlined"
                     class="d-flex justify-start w-100"
@@ -56,7 +56,7 @@
                     >ประวัติการสั่งซื้อ</v-btn
                   >
                 </v-list-item>
-                <v-list-item v-if="!globalitem || globalitem.n == 'admin'">
+                <v-list-item v-if="!!globalitem || globalitem.n == 'admin'">
                   <Router-custom :theme="themes" :path="'/admin'">
                     <template #default>
                       <v-btn
@@ -111,7 +111,7 @@
   </Notivue>
 </template>
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, watch } from "vue";
 import CartsItems from "@/components/CartsItems.vue";
 import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useCookie } from "@/composables/useCookie";
@@ -119,16 +119,17 @@ import { Notivue, Notification, push } from "notivue";
 
 const emit = defineEmits(["themes"]);
 const { deleteItem, isItem } = useLocalStorage();
+const { deleteCookie,getCookie } = useCookie();
 const item_info = inject("_info");
 const themes = ref("light");
 let temp = isItem("userToken") ? true : false;
-const { deleteCookie } = useCookie();
+
 import { useJWT } from "@/composables/useJWT";
 const { getItem } = useJWT();
-const { getCookie } = useCookie();
 const globalitem = ref(getItem(getCookie("jwt")));
 const is_login = ref(temp);
 const carts = ref(false);
+
 const logout = async () => {
   push.success({
     position: "top-right",
@@ -141,6 +142,13 @@ const logout = async () => {
     window.location.href = "";
   }, 1000);
 };
+watch(() => {
+  if (!globalitem.value) {
+    deleteItem("userToken");
+    deleteCookie("jwt");
+  }
+});
+
 const handleClick = () => {
   if (!themes.value) themes.value = "light";
   emit("themes", themes.value); // 🚀 ส่งข้อมูลไปให้ Parent

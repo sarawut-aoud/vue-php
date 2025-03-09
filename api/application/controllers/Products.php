@@ -29,8 +29,21 @@ class Products extends RestAPI
     public function getList_get()
     {
         try {
-            $result = [];
-            $result = $this->db->query("SELECT * FROM swtar_reread.products WHERE is_active = 1")->result();
+            $req = (object) $this->input->get();
+
+            $filter = '';
+            if ($req->cate) {
+                $filter .= " AND b.cate_id = $req->cate";
+            }
+            $result = $this->db->query(
+                "SELECT a.* 
+                FROM swtar_reread.products a
+                LEFT JOIN swtar_reread.products_cate b ON b.p_id = a.id
+                WHERE a.is_active = 1 $filter
+                GROUP BY a.id
+          "
+            )->result();
+          
             $result = array_map(function ($e) {
                 return [
                     '_i' => (int) $e->id,
@@ -49,7 +62,7 @@ class Products extends RestAPI
                     'picture' => array_map(function ($e) {
                         return [
                             '_i' => (int) $e->id,
-                            'path' => '/api' . substr($e->picture,1),
+                            'path' => '/api' . substr($e->picture, 1),
                         ];
                     }, $this->db->query("SELECT a.*
                     FROM swtar_reread.product_image a 
