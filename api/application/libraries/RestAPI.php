@@ -40,13 +40,14 @@ class RestAPI extends REST_Controller
             $input = $this->input->request_headers();
             // $header = $input ?? $payload;
             $bearer = $input['authorization'];
+
             $xapikey = $input['x-api-key'];
             if (!empty($bearer)) {
                 if (preg_match('/Bearer\s(\S+)/', $bearer, $matches)) {
                     $token = $matches[1];
                 }
             }
-           
+
             if ((!$token || !$bearer) || ($xapikey && $bearer)) {
                 $this->response(['msg' => 'Unauthentication'], 401);
                 header('Content-Type: application/json');
@@ -61,7 +62,7 @@ class RestAPI extends REST_Controller
             }
 
             $exist = $this->db->query('SELECT * FROM swtar_reread.api_users a WHERE a.token = ? AND a.expired_date >= CURRENT_TIMESTAMP() ', [$token])->row();
-
+       
             if (!$exist) {
                 $this->response(['msg' => 'Unauthentication'], 401);
                 header('Content-Type: application/json');

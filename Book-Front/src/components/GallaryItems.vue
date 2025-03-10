@@ -57,11 +57,12 @@
                     <div class="d-flex flex-column ga-2 w-100">
                       <div class="d-flex justify-end align-center">
                         <v-icon icon="mdi-currency-usd" size="small"></v-icon>
-                        <div>50</div>
+                        <div>{{ item?.price }}</div>
                       </div>
                       <div class="d-flex justify-space-between">
                         <v-btn text="Share">รายละเอียด</v-btn>
                         <v-btn
+                          @click="pushCart(item?._i)"
                           class="ms-auto"
                           color="primary"
                           text="Explore"
@@ -141,11 +142,12 @@
                       <div class="d-flex flex-column ga-2 w-100">
                         <div class="d-flex justify-end align-center">
                           <v-icon icon="mdi-currency-usd" size="small"></v-icon>
-                          <div>50</div>
+                          <div>{{ item?.price }}</div>
                         </div>
                         <div class="d-flex justify-space-between">
                           <v-btn text="Share">รายละเอียด</v-btn>
                           <v-btn
+                            @click="pushCart(item?._i)"
                             class="ms-auto"
                             color="primary"
                             text="Explore"
@@ -166,9 +168,16 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted } from "vue";
+import { ref, defineProps, onMounted, inject } from "vue";
 import { useDisplay } from "vuetify";
+
+import { useJWT } from "@/composables/useJWT";
+import { useCookie } from "@/composables/useCookie";
 import api from "/utils/axios";
+const { getCookie } = useCookie();
+const { getItem } = useJWT();
+const { mobile } = useDisplay();
+
 const tab = ref(null);
 const catelists = ref([]);
 const getList = async () => {
@@ -177,7 +186,6 @@ const getList = async () => {
     catelists.value = data.data;
   }
 };
-const { mobile } = useDisplay();
 
 const props = defineProps({
   cateId: {
@@ -202,8 +210,32 @@ const getListProduct = async (cate = null) => {
   }, 500);
 };
 const loadProduct = ref(false);
+const globalitem = ref(getItem(getCookie("jwt")));
+const getCountCart = inject("getCountCart");
+
+const pushCart = async (id) => {
+  await api
+    .post("/api/orders/pushCart", {
+      uid: globalitem.value.ui,
+      id: id,
+      csrf_token_ci_gen: getCookie("csrf_cookie_ci_gen"),
+    })
+    .then((rs) => {
+      return rs.data;
+    })
+    .then((result) => {
+      getCountCart;
+    })
+    .catch((e) => {
+      if (e.status == 401) {
+        window.location.href = "/login";
+      }
+    });
+};
+
 onMounted(() => {
   getList();
   getListProduct();
 });
+defineExpose();
 </script>

@@ -28,7 +28,7 @@ const getTheme = (e) => {
 <template>
   <v-responsive class="border rounded">
     <v-app :theme="theme" class="position-relative">
-      <App-header @themes="getTheme"></App-header>
+      <App-header @themes="getTheme" ></App-header>
       <v-navigation-drawer style="padding-top: 30px">
         <v-list>
           <v-list-subheader class="d-flex justify-center"> หมวดหมู่</v-list-subheader>

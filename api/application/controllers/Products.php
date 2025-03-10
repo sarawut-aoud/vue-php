@@ -21,7 +21,7 @@ class Products extends RestAPI
     public function index_get()
     {
         try {
-            self::setRes(['msg' => 'Category API'], 200);
+            self::setRes(['msg' => 'Products API'], 200);
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);
         }
@@ -43,13 +43,14 @@ class Products extends RestAPI
                 GROUP BY a.id
           "
             )->result();
-          
+
             $result = array_map(function ($e) {
                 return [
                     '_i' => (int) $e->id,
                     'no' => $e->p_no,
                     'name' => $e->p_name,
                     'detail' => $e->p_detail,
+                    'price' => (float)$e->p_price,
                     'cate_id' => array_map(function ($e) {
                         return [
                             '_i' => (int) $e->id,

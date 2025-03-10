@@ -4,8 +4,10 @@
       <Router-custom :theme="themes" :path="'/'">
         <template #default>
           <div class="d-flex ga-3 align-center">
-            <v-img :src="'/api/assets/images/logo_1.jpg'" style="width: 8%"></v-img>
-            <div class="w-100">Reread</div>
+            <div style="width: 100px">
+              <v-img :src="'/api/assets/images/logo_1.jpg'" class="w-100"></v-img>
+            </div>
+            <div class="" style="width: fit-content">Reread</div>
           </div>
         </template>
       </Router-custom>
@@ -56,7 +58,7 @@
                     >ประวัติการสั่งซื้อ</v-btn
                   >
                 </v-list-item>
-                <v-list-item v-if="!!globalitem || globalitem.n == 'admin'">
+                <v-list-item v-if="!!globalitem && globalitem.n == 'admin'">
                   <Router-custom :theme="themes" :path="'/admin'">
                     <template #default>
                       <v-btn
@@ -98,9 +100,14 @@
       <template v-if="!globalitem || globalitem.n != 'admin'">
         <v-divider vertical></v-divider>
         <div>
-          <v-badge :content="5" color="red">
-            <v-btn border icon="mdi-cart" @click="carts = !carts"></v-btn>
-          </v-badge>
+          <v-btn @click="carts = !carts" stacked flat>
+            <template v-if="cartCount > 0">
+              <v-badge :content="cartCount" color="red">
+                <v-icon icon="mdi-cart" size="large"></v-icon>
+              </v-badge>
+            </template>
+            <template v-else><v-icon icon="mdi-cart" size="large"></v-icon></template>
+          </v-btn>
         </div>
       </template>
     </div>
@@ -111,15 +118,16 @@
   </Notivue>
 </template>
 <script setup>
-import { ref, inject, watch } from "vue";
+import { ref, inject, watch ,onMounted ,provide } from "vue";
 import CartsItems from "@/components/CartsItems.vue";
 import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useCookie } from "@/composables/useCookie";
 import { Notivue, Notification, push } from "notivue";
+import api from "/utils/axios";
 
 const emit = defineEmits(["themes"]);
 const { deleteItem, isItem } = useLocalStorage();
-const { deleteCookie,getCookie } = useCookie();
+const { deleteCookie, getCookie } = useCookie();
 const item_info = inject("_info");
 const themes = ref("light");
 let temp = isItem("userToken") ? true : false;
@@ -143,14 +151,34 @@ const logout = async () => {
   }, 1000);
 };
 watch(() => {
-  if (!globalitem.value) {
+  if (!globalitem.value?.ui) {
     deleteItem("userToken");
     deleteCookie("jwt");
   }
+  
 });
 
 const handleClick = () => {
   if (!themes.value) themes.value = "light";
   emit("themes", themes.value); // 🚀 ส่งข้อมูลไปให้ Parent
 };
+const cartCount = ref(0);
+const getCountCart = async () => {
+  let { data } = await api.get("/api/orders/getMyCart", {
+    params: {
+      uid: globalitem.value?.ui,
+    },
+  });
+  if (data.data?.length > 0) {
+    cartCount.value = data.data?.length;
+  }else{
+    cartCount.value =0
+  }
+};
+onMounted(()=>{
+  getCountCart()
+  setInterval(() => {
+    getCountCart()
+  }, 1000);
+});
 </script>

@@ -41,9 +41,11 @@ class Authen extends RestAPI
             LEFT JOIN swtar_reread.personaldocument b ON b.pd_id = a.pd_id
             WHERE b.username = ?
             ", [$payload->email])->row();
-
+            // if (!pass_secure_verify($payload->password, $exist->password)) {
+            //     self::setErr('Not found Password', 404);
+            // }
             if (!password_verify(encrypt_md5_salt($payload->password), $exist->password)) {
-                self::setErr('Not found user', 404);
+                self::setErr('Not found Password', 404);
             }
             $jwt = self::setJWT($exist->pd_id, $exist->user_type);
 
@@ -97,13 +99,12 @@ class Authen extends RestAPI
             $exist = $this->db->query("SELECT * FROM swtar_reread.api_users a WHERE a.username = ?", $username)->row();
             if ($exist) self::setErr('Sorry, Username is unavailable', 403);
 
-            $password = encrypt_md5_salt($password);
 
             $this->db->insert('swtar_reread.personaldocument', [
                 'email' => $email,
                 'username' => $email,
                 'first_name' => $username,
-                'password' => pass_secure_hash($password),
+                'password' => pass_secure_hash(($password)),
             ]);
             $last_id = $this->db->insert_id();
 
@@ -125,6 +126,8 @@ class Authen extends RestAPI
 
 
             $jwt = self::setJWT($last_id);
+
+
             self::setRes([
                 'msg' => "Create success",
                 'token_key' => $token,
