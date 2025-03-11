@@ -28,8 +28,8 @@ const getTheme = (e) => {
 <template>
   <v-responsive class="border rounded">
     <v-app :theme="theme" class="position-relative">
-      <App-header @themes="getTheme" ></App-header>
-      <v-navigation-drawer style="padding-top: 30px">
+      <App-header @themes="getTheme"></App-header>
+      <!-- <v-navigation-drawer style="padding-top: 30px">
         <v-list>
           <v-list-subheader class="d-flex justify-center"> หมวดหมู่</v-list-subheader>
           <v-list-item value="all" color="info" rounded="xl"
@@ -52,28 +52,30 @@ const getTheme = (e) => {
           </v-list-item>
         </v-list>
         <v-divider></v-divider>
-      </v-navigation-drawer>
+      </v-navigation-drawer> -->
       <v-main style="padding-top: 100px">
-        <div class="d-flex flex-column ga-2">
-          <div>
-            <v-card>
-              <v-img
-                height="200px"
-                src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                cover
-              ></v-img>
-              <v-card-title> Top western road trips </v-card-title>
-              <v-card-subtitle> 1,000 miles of wonder </v-card-subtitle>
-              <v-card-actions>
-                <v-btn color="orange-lighten-2" text="Explore"></v-btn>
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
+        <v-container>
+          <div class="d-flex flex-column ga-2">
+            <div>
+              <v-card>
+                <v-img
+                  height="200px"
+                  src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+                  cover
+                ></v-img>
+                <v-card-title> Top western road trips </v-card-title>
+                <v-card-subtitle> 1,000 miles of wonder </v-card-subtitle>
+                <v-card-actions>
+                  <v-btn color="orange-lighten-2" text="Explore"></v-btn>
+                  <v-spacer></v-spacer>
+                </v-card-actions>
+              </v-card>
+            </div>
+            <div>
+              <Gallary-items :cateId="null"></Gallary-items>
+            </div>
           </div>
-          <div>
-            <Gallary-items :cateId="null"></Gallary-items>
-          </div>
-        </div>
+        </v-container>
       </v-main>
 
       <AppFooter />

@@ -16,6 +16,8 @@ import Login from '@/pages/auth/index.vue';
 import Index from '@/pages/index.vue';
 import Register from '@/pages/auth/register.vue';
 import Information from '@/pages/users/information.vue';
+import Payments from '@/pages/users/Payments.vue';
+import Historys from '@/pages/users/history.vue';
 
 const {getCookie} = useCookie();
 const {getItem} = useJWT();
@@ -42,9 +44,15 @@ const router = createRouter({
       name:"Users",
       children: [
         { path: 'info', component:Information ,name:"UserInfo"},
-        // { path: 'users', component:History },
-        // { path: 'users/:id', component:  },
+         { path: 'history', component:Historys ,ame:"Historys"},
+      
       ], 
+      meta: { requiresAuth: true ,role:'emp'} // 🟢 Public Route
+    },
+    {
+      path:'/Payments',
+      name:"Payments",
+      component:Payments,
       meta: { requiresAuth: true ,role:'emp'} // 🟢 Public Route
     },
     {

@@ -13,8 +13,30 @@
           <div class="pa-2">
             <div class="mb-3 d-flex justify-start w-100 align-end ga-3">
               <v-window show-arrows>
-                <v-window-item v-for="n in item?.product?.picture">
-                  <v-img :src="n.path" height="100" width="100" cover></v-img>
+                <template v-slot:prev="{ props }">
+                  <v-btn
+                    class="mt-auto mb-2"
+                    icon="mdi-chevron-left"
+                    size="small"
+                    variant="outlined"
+                    color="white"
+                    @click="props.onClick"
+                  >
+                  </v-btn>
+                </template>
+                <template v-slot:next="{ props }">
+                  <v-btn
+                    class="mt-auto mb-2"
+                    icon="mdi-chevron-right"
+                    size="small"
+                    variant="outlined"
+                    color="white"
+                    @click="props.onClick"
+                  >
+                  </v-btn>
+                </template>
+                <v-window-item v-for="n in item?.product?.picture" :key="`card-${n}`">
+                  <v-img :src="n.path" width="200" height="100" cover=""></v-img>
                 </v-window-item>
               </v-window>
               <div class="d-flex flex-column ga-2 w-100">
@@ -25,6 +47,7 @@
                   variant="outlined"
                   rounded="lg"
                   hide-details=""
+                  readonly=""
                 ></v-text-field>
                 <div class="d-flex align-center ga-2 w-100">
                   <div class="w-100">
@@ -69,19 +92,11 @@
                 density="compact"
                 variant="outlined"
                 rounded="lg"
+                readonly=""
                 hide-details=""
               ></v-text-field>
             </div>
             <div class="d-flex ga-2 align-center mb-3">
-              <!-- <v-text-field
-                label="VAT 7%"
-                v-model="item.vat"
-                density="compact"
-                variant="outlined"
-                rounded="lg"
-                hide-details=""
-                readonly=""
-              ></v-text-field> -->
               <v-text-field
                 label="ราคาสุทธิ"
                 v-model="item.sum"
@@ -97,8 +112,25 @@
       </v-list-item>
     </v-list>
     <template v-slot:append>
-      <div class="pa-2">
-        <v-btn color="success" prepend-icon="mdi-cash" block>ชำระเงิน</v-btn>
+      <div class="d-flex flex-column ga-3 pa-2">
+        <div class="d-flex justify-space-between">
+          <div class="w-100">ราคา</div>
+          <div class="w-100 text-end">{{ sum_price }} บาท</div>
+        </div>
+        <div class="d-flex justify-space-between">
+          <div class="w-100">ส่วนลด</div>
+          <div class="w-100 text-end">{{ sum_discount }} บาท</div>
+        </div>
+        <div class="d-flex justify-space-between">
+          <div class="w-100">ราคาสุทธิ</div>
+          <div class="w-100 text-end">{{ sum_total }} บาท</div>
+        </div>
+        <v-divider></v-divider>
+        <div class="mt-auto">
+          <v-btn @click="payments" color="success" prepend-icon="mdi-cash" block
+            >ชำระเงิน</v-btn
+          >
+        </div>
       </div>
     </template>
   </v-navigation-drawer>
@@ -130,8 +162,8 @@ const getItemCart = async () => {
   });
   if (data.data?.length > 0) {
     myorders.value = data.data;
-  }else{
-    myorders.value =[]
+  } else {
+    myorders.value = [];
   }
 };
 
@@ -170,4 +202,41 @@ watch(() => {
     checkJwt();
   }
 });
+const sum_price = ref(0);
+const sum_discount = ref(0);
+const sum_total = ref(0);
+const order_id_group = ref([]);
+watch(() => {
+  if (myorders.value.length > 0) {
+    myorders.value.forEach((e, index) => {
+      sum_price.value += e.sum;
+      sum_total.value += e.total;
+      sum_discount.value += e.discount;
+    });
+    order_id_group.value = myorders.value.map((e) => e._i);
+  }
+});
+
+const payments = async () => {
+  await api
+    .post("/api/orders/paymentOrder", {
+      csrf_token_ci_gen: getCookie("csrf_cookie_ci_gen"),
+      uid: globalitem.value?.ui,
+      price: sum_price.value,
+      total: sum_total.value,
+      order_id: order_id_group.value,
+      discount: sum_discount.value,
+    })
+    .then((rs) => {
+      return rs.data;
+    })
+    .then((result) => {
+      if (result.status) {
+        window.location.href = "/payments";
+      }
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+};
 </script>

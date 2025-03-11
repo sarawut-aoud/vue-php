@@ -120,10 +120,10 @@ class Orders extends RestAPI
             $vat =   $total * 0.7;
             $this->db->update('swtar_reread.orders', [
                 'amount' => $amount,
-                'discount' => 0,
-                'total_price' => $total,
+                'discount' => round(0, 2),
+                'total_price' => round($total, 2),
                 'vat' =>   $vat,
-                'grand_total' => $total,
+                'grand_total' => round($total, 2),
             ], [
                 'id' => $order_id,
                 'pd_id' => $pd_id,
@@ -147,10 +147,19 @@ class Orders extends RestAPI
 
             $product = $this->db->query("SELECT * FROM swtar_reread.products WHERE id = ? ", [$check->product_id])->row();
             if (!$product) self::setRes("NOT FOUND", 400);
-
             self::setOrder($check->amount, $req->id, $product->p_price, $req->uid, $product->id, $increase);
 
 
+            self::setRes("SUCCESS", 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
+    public function paymentOrder_post()
+    {
+        try {
+            $req = (object) $this->input->post();
+           
             self::setRes("SUCCESS", 200);
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);

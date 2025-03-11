@@ -50,13 +50,17 @@
                 </v-list-item>
 
                 <v-list-item v-if="!!globalitem || globalitem.n != 'admin'">
-                  <v-btn
-                    variant="outlined"
-                    class="d-flex justify-start w-100"
-                    rounded="lg"
-                    prepend-icon="mdi-clipboard-text-clock"
-                    >ประวัติการสั่งซื้อ</v-btn
-                  >
+                  <Router-custom :theme="themes" :path="'/users/history'">
+                    <template #default>
+                      <v-btn
+                        variant="outlined"
+                        class="d-flex justify-start w-100"
+                        rounded="lg"
+                        prepend-icon="mdi-clipboard-text-clock"
+                        >ประวัติการสั่งซื้อ</v-btn
+                      >
+                    </template>
+                  </Router-custom>
                 </v-list-item>
                 <v-list-item v-if="!!globalitem && globalitem.n == 'admin'">
                   <Router-custom :theme="themes" :path="'/admin'">
@@ -118,7 +122,7 @@
   </Notivue>
 </template>
 <script setup>
-import { ref, inject, watch ,onMounted ,provide } from "vue";
+import { ref, inject, watch, onMounted, provide } from "vue";
 import CartsItems from "@/components/CartsItems.vue";
 import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useCookie } from "@/composables/useCookie";
@@ -155,7 +159,6 @@ watch(() => {
     deleteItem("userToken");
     deleteCookie("jwt");
   }
-  
 });
 
 const handleClick = () => {
@@ -171,14 +174,14 @@ const getCountCart = async () => {
   });
   if (data.data?.length > 0) {
     cartCount.value = data.data?.length;
-  }else{
-    cartCount.value =0
+  } else {
+    cartCount.value = 0;
   }
 };
-onMounted(()=>{
-  getCountCart()
+onMounted(() => {
+  getCountCart();
   setInterval(() => {
-    getCountCart()
+    getCountCart();
   }, 1000);
 });
 </script>
