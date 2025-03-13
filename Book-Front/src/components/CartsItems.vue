@@ -1,12 +1,22 @@
 <template>
   <v-navigation-drawer
     width="500"
-    v-model="props.carts"
+    v-model="localCarts"
     location="end"
     temporary
-    class="pa-3"
+    class="pa-3 position-fixed h-100 top-0"
   >
-    <v-list lines="two" class="mt-5 ga-2 d-flex flex-column">
+    <div class="mt-5">ตะกร้าสินค้า</div>
+    <v-btn
+      v-if="localCarts"
+      @click="handleClick"
+      class="position-absolute"
+      style="z-index: 2000; top: 50%; left: -20px"
+      color="primary"
+      icon="mdi-chevron-right"
+      size="small"
+    ></v-btn>
+    <v-list lines="two" class="mt-4 ga-2 d-flex flex-column">
       <v-list-item rounded="lg" border v-for="item in myorders" :key="item">
         <v-list-title>ชื่อสินค้า : {{ item.product?.name }}</v-list-title>
         <v-list-item>
@@ -27,11 +37,11 @@
                 <template v-slot:next="{ props }">
                   <v-btn
                     class="mt-auto mb-2"
-                    icon="mdi-chevron-right"
                     size="small"
                     variant="outlined"
                     color="white"
                     @click="props.onClick"
+                    icon="mdi-chevron-right"
                   >
                   </v-btn>
                 </template>
@@ -147,14 +157,15 @@ const globalitem = ref(getItem(getCookie("jwt")));
 const { deleteItem, isItem } = useLocalStorage();
 
 const props = defineProps({
-  carts: {
-    default: false,
-    type: Boolean,
-  },
+  carts: Boolean,
 });
+const localCarts = ref(props.carts);
+
+const getCountCart = inject("getCountCart");
 
 const myorders = ref([]);
 const getItemCart = async () => {
+  getCountCart();
   let { data } = await api.get("/api/orders/getMyCart", {
     params: {
       uid: globalitem.value?.ui,
@@ -196,9 +207,10 @@ const pushCart = async (id, increase = 1) => {
       }
     });
 };
-onMounted(() => {});
 watch(() => {
+  localCarts.value = false;
   if (props.carts) {
+    localCarts.value = props.carts;
     checkJwt();
   }
 });
@@ -207,6 +219,9 @@ const sum_discount = ref(0);
 const sum_total = ref(0);
 const order_id_group = ref([]);
 watch(() => {
+  sum_price.value = 0;
+  sum_total.value = 0;
+  sum_discount.value = 0;
   if (myorders.value.length > 0) {
     myorders.value.forEach((e, index) => {
       sum_price.value += e.sum;
@@ -238,5 +253,11 @@ const payments = async () => {
     .catch((e) => {
       console.error(e);
     });
+};
+
+const emit = defineEmits(["carts"]);
+const handleClick = () => {
+  localCarts.value = false;
+  emit("carts", localCarts.value);
 };
 </script>

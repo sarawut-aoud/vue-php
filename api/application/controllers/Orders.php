@@ -91,10 +91,8 @@ class Orders extends RestAPI
                     'discount' => 0,
                     'total_price' => $total,
                     'vat' =>   $vat,
-                    'grand_total' => $total + $vat,
+                    'grand_total' => $total,
                     'status' => 'pending',
-                    'order_number' => $req->uid . date('Ymd')
-
                 ]);
             } else {
                 self::setOrder($check->amount, $check->id, $product->price, $req->uid, $req->id, true);
@@ -159,8 +157,60 @@ class Orders extends RestAPI
     {
         try {
             $req = (object) $this->input->post();
-           
+
+            $this->db->insert('swtar_reread.orders_payment', [
+                'pd_id' => $req->uid,
+                'expire_date' => date('Y-m-d H:i', strtotime("+1DAY")),
+                'price' => $req->price,
+                'discount' => $req->discount,
+                'total_price' => $req->total
+            ]);
+            $last_id = $this->db->insert_id();
+            $this->db->update('swtar_reread.orders_payment', ['order_number' => date('Ymd') . str_pad($last_id, 4, 0, STR_PAD_LEFT)], ['id' => $last_id]);
+            foreach ($req->order_id as $id) {
+                $this->db->update('swtar_reread.orders', ['status' => 'paid', 'order_payment_id' => $last_id], ['id' => $id]);
+            }
+
+
             self::setRes("SUCCESS", 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
+    public function getHistorys_get()
+    {
+        try {
+            $result = $this->db->query(
+                "SELECT * FROM swtar_reread.orders_payment WHERE pd_id = ?",
+                [$this->pd_id]
+            )->result();
+            $result = array_map(function ($e) {
+                return [
+                    '_i' => (int)$e->id,
+                    'price' => round($e->price, 2),
+                    'discount' => round($e->discount, 2),
+                    'total_price' => round($e->total_price, 2),
+                    'order_number' => $e->order_number,
+                    'date' => date('d-M-Y', strtotime($e->created_at)),
+                    'status' => $e->status,
+                ];
+            }, $result);
+            self::setRes($result, 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
+    public function cancelOrder_post($id)
+    {
+        try {
+            if (!$id) self::setErr('INPUT ERROR', 403);
+            $exist = $this->db->query("SELECT * FROM swtar_reread.orders_payment WHERE pd_id = ? AND id = ? AND status ='pending'", [$this->pd_id, $id])->row();
+            if (!$exist) self::setErr('NOT FOUND', 404);
+
+            $this->db->update('swtar_reread.orders_payment', ['status' => 'canceled'], ['pd_id' => $this->pd_id, 'id' => $id]);
+            $this->db->update('swtar_reread.orders', ['status' => 'canceled'], ['order_payment_id' => $id]);
+
+            self::setRes('SUCCESS', 200);
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);
         }

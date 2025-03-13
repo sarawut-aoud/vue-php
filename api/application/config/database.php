@@ -145,15 +145,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $active_group = 'default';
 define("DBSET", 0);
 
-switch (DBSET) {
-    default: {
-            $hostname = "localhost";
-            $DB_NAME = 'swtar_reread';
-            $DB_USER = "root";
-            $DB_PASS = '';
-            $mysql_port = '3306';
-        }
-}
+
+$hostname = "127.0.0.1";
+$DB_NAME = 'swtar_reread';
+$DB_USER = "root";
+$DB_PASS = '';
+$mysql_port = 3306;
+
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => $hostname,

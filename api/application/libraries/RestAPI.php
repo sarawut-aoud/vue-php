@@ -62,7 +62,7 @@ class RestAPI extends REST_Controller
             }
 
             $exist = $this->db->query('SELECT * FROM swtar_reread.api_users a WHERE a.token = ? AND a.expired_date >= CURRENT_TIMESTAMP() ', [$token])->row();
-       
+
             if (!$exist) {
                 $this->response(['msg' => 'Unauthentication'], 401);
                 header('Content-Type: application/json');
@@ -74,6 +74,8 @@ class RestAPI extends REST_Controller
                     'msg' => 'Unauthorization',
                 ]);
                 exit(1);
+            } else {
+                self::setUserData($exist);
             }
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);
@@ -240,5 +242,9 @@ class RestAPI extends REST_Controller
                 }
             }
         }
+    }
+    protected function setUserData($data)
+    {
+        $this->pd_id = $data->pd_id;
     }
 }

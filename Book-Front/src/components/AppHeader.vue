@@ -116,7 +116,7 @@
       </template>
     </div>
   </v-app-bar>
-  <Carts-items :carts="carts"></Carts-items>
+  <Carts-items :carts="carts" @carts="cartstemp"></Carts-items>
   <Notivue v-slot="item">
     <Notification :item="item" />
   </Notivue>
@@ -133,6 +133,7 @@ const emit = defineEmits(["themes"]);
 const { deleteItem, isItem } = useLocalStorage();
 const { deleteCookie, getCookie } = useCookie();
 const item_info = inject("_info");
+const cartCount = inject("cartCount");
 const themes = ref("light");
 let temp = isItem("userToken") ? true : false;
 
@@ -165,23 +166,10 @@ const handleClick = () => {
   if (!themes.value) themes.value = "light";
   emit("themes", themes.value); // 🚀 ส่งข้อมูลไปให้ Parent
 };
-const cartCount = ref(0);
-const getCountCart = async () => {
-  let { data } = await api.get("/api/orders/getMyCart", {
-    params: {
-      uid: globalitem.value?.ui,
-    },
-  });
-  if (data.data?.length > 0) {
-    cartCount.value = data.data?.length;
-  } else {
-    cartCount.value = 0;
-  }
+const cartstemp = (e) => {
+  carts.value = e;
 };
 onMounted(() => {
-  getCountCart();
-  setInterval(() => {
-    getCountCart();
-  }, 1000);
+  // getCountCart();
 });
 </script>

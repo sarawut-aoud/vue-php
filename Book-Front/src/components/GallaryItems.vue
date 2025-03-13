@@ -364,7 +364,7 @@ const pushCart = async (id) => {
       return rs.data;
     })
     .then((result) => {
-      getCountCart;
+      getCountCart();
     })
     .catch((e) => {
       if (e.status == 401) {
@@ -378,12 +378,12 @@ const openDetail = (id) => {
   dialog_deatail.value = true;
   let item = productsList.value.filter((e) => e._i == id);
   temp.value = item[0];
-  console.log(temp);
+
 };
 
 onMounted(() => {
   getList();
   getListProduct();
 });
-defineExpose();
+
 </script>

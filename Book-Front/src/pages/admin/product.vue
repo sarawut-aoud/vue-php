@@ -75,7 +75,7 @@
                         <v-card-actions>
                           <div class="d-flex justify-center w-100">
                             <v-btn
-                            @click="uploadImage(item._i)"
+                              @click="uploadImage(item._i)"
                               text="อัพโหลด"
                               color="success"
                               variant="flat"
@@ -328,7 +328,7 @@ const uploadImage = async (id) => {
 
     console.log("Upload success:", response.data);
     push.success("บันทึกข้อมูลสำเร็จ!");
-    getListProduct()
+    getListProduct();
   } catch (error) {
     console.error("Upload failed:", error);
     push.error("เกิดข้อผิดพลาดในการอัปโหลด");
