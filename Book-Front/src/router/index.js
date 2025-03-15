@@ -50,7 +50,7 @@ const router = createRouter({
       meta: { requiresAuth: true ,role:'emp'} // 🟢 Public Route
     },
     {
-      path:'/Payments',
+      path:'/Payments/:order_number',
       name:"Payments",
       component:Payments,
       meta: { requiresAuth: true ,role:'emp'} // 🟢 Public Route

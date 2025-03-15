@@ -82,15 +82,18 @@ class RestAPI extends REST_Controller
         }
     }
 
-    protected function setRes($data, $code = 200)
+    protected function setRes($data, $code = 200, $options = [])
     {
 
         $RES = [
             'status' => self::HTTP_CODE[(int)$code],
             'success' => true,
             'code' => $code,
-            'data' => $data ?? []
+            'data' => $data ?? [],
         ];
+        if (!!$options) {
+            $RES['options'] = $options;
+        }
 
         throw new Exception(json_encode($RES));
     }

@@ -21,39 +21,7 @@
             <template v-else>
               <v-col v-for="(item, i) in productsList" :key="i" cols="12" md="3">
                 <v-card class="mx-auto" max-width="500" max-height="500" rounded="lg">
-                  <v-window show-arrows>
-                    <template v-slot:prev="{ props }">
-                      <v-btn
-                        class="mt-auto mb-2"
-                        icon="mdi-chevron-left"
-                        size="small"
-                        variant="outlined"
-                        color="white"
-                        @click="props.onClick"
-                      >
-                      </v-btn>
-                    </template>
-                    <template v-slot:next="{ props }">
-                      <v-btn
-                        class="mt-auto mb-2"
-                        icon="mdi-chevron-right"
-                        size="small"
-                        variant="outlined"
-                        color="white"
-                        @click="props.onClick"
-                      >
-                      </v-btn>
-                    </template>
-                    <v-window-item v-for="n in item?.picture" :key="`card-${n}`">
-                      <v-img
-                        :lazy-src="`https://picsum.photos/10/6?image=${i * n * 5 + 10}`"
-                        :src="n.path"
-                        height="205"
-                        width="400"
-                        cover
-                      ></v-img>
-                    </v-window-item>
-                  </v-window>
+                  <image-slide :images="item?.picture"></image-slide>
                   <v-card-title>{{ item?.name }}</v-card-title>
                   <v-card-subtitle class="pt-4"
                     >รหัสหนังสือ : {{ item?.no }}</v-card-subtitle
@@ -134,43 +102,11 @@
               <template v-else>
                 <v-col v-for="(item, i) in productsList" :key="i" cols="12" md="3">
                   <v-card class="mx-auto" max-width="500" max-height="500" rounded="lg">
-                    <v-window show-arrows>
-                      <template v-slot:prev="{ props }">
-                        <v-btn
-                          class="mt-auto mb-2"
-                          icon="mdi-chevron-left"
-                          size="small"
-                          variant="outlined"
-                          color="white"
-                          @click="props.onClick"
-                        >
-                        </v-btn>
-                      </template>
-                      <template v-slot:next="{ props }">
-                        <v-btn
-                          class="mt-auto mb-2"
-                          icon="mdi-chevron-right"
-                          size="small"
-                          variant="outlined"
-                          color="white"
-                          @click="props.onClick"
-                        >
-                        </v-btn>
-                      </template>
-                      <v-window-item v-for="n in item?.picture" :key="`card-${n}`">
-                        <v-img
-                          :lazy-src="`https://picsum.photos/10/6?image=${i * n * 5 + 10}`"
-                          :src="n.path"
-                          height="205"
-                          width="400"
-                          cover
-                        ></v-img>
-                      </v-window-item>
-                    </v-window>
+                    <image-slide :images="item?.picture"></image-slide>
                     <v-card-title>{{ item?.name }}</v-card-title>
-                    <v-card-subtitle class="pt-4"
-                      >รหัสหนังสือ : {{ item?.no }}</v-card-subtitle
-                    >
+                    <v-card-subtitle class="pt-4">
+                      รหัสหนังสือ : {{ item?.no }}
+                    </v-card-subtitle>
                     <v-card-text>
                       <div class="text-caption mb-2">หมวดหมู่</div>
                       <template
@@ -184,8 +120,9 @@
                           hide-details
                           density="comfortable"
                           size="small"
-                          >{{ cate.name }}</v-chip
                         >
+                          {{ cate.name }}
+                        </v-chip>
                       </template>
                     </v-card-text>
 
@@ -378,12 +315,10 @@ const openDetail = (id) => {
   dialog_deatail.value = true;
   let item = productsList.value.filter((e) => e._i == id);
   temp.value = item[0];
-
 };
 
 onMounted(() => {
   getList();
   getListProduct();
 });
-
 </script>

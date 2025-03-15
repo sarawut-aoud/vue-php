@@ -15,6 +15,7 @@ class Products extends RestAPI
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('Upload_model', 'Upload');
 
         // $this->validateAuth();
     }
@@ -111,8 +112,8 @@ class Products extends RestAPI
                 }
                 if (count($cate_data) > 0) $this->db->insert_batch('swtar_reread.products_cate', $cate_data);
             }
+            $files = $this->Upload->upload_images('uploads');
 
-            $files = self::upload_images();
 
             $file_image = [];
             if (count($files) > 0) {
@@ -144,26 +145,7 @@ class Products extends RestAPI
             self::sendResponse($e, __METHOD__);
         }
     }
-    public function upload_images()
-    {
-        $uploadedFiles = [];
-        if (!empty($_FILES['images']['name'])) {
-            $uploadPath = './assets/uploads/'; // เช็กว่าไฟล์อัปโหลดไปที่ assets จริงไหม
-            if (!is_dir($uploadPath)) {
-                mkdir($uploadPath, 0777, true);
-            }
-            foreach ($_FILES['images']['name'] as $key => $name) {
-                $tmpName = $_FILES['images']['tmp_name'][$key];
-                $newFileName = time() . '_' . $name;
-                $destination = $uploadPath . $newFileName;
-                if (move_uploaded_file($tmpName, $destination)) {
-                    $uploadedFiles[] = $uploadPath . $newFileName;
-                }
-            }
-        }
 
-        return  $uploadedFiles;
-    }
     public function removePicture_get($id)
     {
         try {
@@ -183,7 +165,7 @@ class Products extends RestAPI
     {
         try {
             $req = (object) $this->input->post();
-            $files = self::upload_images();
+            $files = $this->Upload->upload_images('uploads');
 
             $file_image = [];
             if (count($files) > 0) {

@@ -12,7 +12,7 @@
       @click="handleClick"
       class="position-absolute"
       style="z-index: 2000; top: 50%; left: -20px"
-      color="primary"
+      color="brown"
       icon="mdi-chevron-right"
       size="small"
     ></v-btn>
@@ -22,33 +22,7 @@
         <v-list-item>
           <div class="pa-2">
             <div class="mb-3 d-flex justify-start w-100 align-end ga-3">
-              <v-window show-arrows>
-                <template v-slot:prev="{ props }">
-                  <v-btn
-                    class="mt-auto mb-2"
-                    icon="mdi-chevron-left"
-                    size="small"
-                    variant="outlined"
-                    color="white"
-                    @click="props.onClick"
-                  >
-                  </v-btn>
-                </template>
-                <template v-slot:next="{ props }">
-                  <v-btn
-                    class="mt-auto mb-2"
-                    size="small"
-                    variant="outlined"
-                    color="white"
-                    @click="props.onClick"
-                    icon="mdi-chevron-right"
-                  >
-                  </v-btn>
-                </template>
-                <v-window-item v-for="n in item?.product?.picture" :key="`card-${n}`">
-                  <v-img :src="n.path" width="200" height="100" cover=""></v-img>
-                </v-window-item>
-              </v-window>
+              <image-slide :images="item?.product?.picture"></image-slide>
               <div class="d-flex flex-column ga-2 w-100">
                 <v-text-field
                   label="จำนวน"
@@ -247,7 +221,7 @@ const payments = async () => {
     })
     .then((result) => {
       if (result.status) {
-        window.location.href = "/payments";
+        window.location.href = "/payments/" + result.options.order_number;
       }
     })
     .catch((e) => {

@@ -15,14 +15,26 @@
                 <v-window-item value="info">
                   <div class="d-flex gap-2 justify-between w-100 ga-3 pa-2">
                     <div class="d-flex flex-column ga-2 justify-start h-100">
+                      <template v-if="picture && selectedFiles.length==0">
+                        <v-img rounded="lg" :width="300" cover :src="picture"></v-img>
+                      </template>
                       <v-img
+                        v-else
                         rounded="lg"
-                        :width="400"
-                        aspect-ratio="16/9"
+                        :width="300"
                         cover
-                        src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
+                        :src="selectedFiles[0]?.preview ?? '/src/assets/user.png'"
                       ></v-img>
-                      <v-btn rounded="lg">เปลี่ยนรูปโปรไฟล์</v-btn>
+                      <input
+                        type="file"
+                        ref="fileInput"
+                        accept="image/*"
+                        hidden
+                        @change="onFileChange"
+                      />
+                      <v-btn rounded="lg" @click="openFilePicker"
+                        >เปลี่ยนรูปโปรไฟล์</v-btn
+                      >
                     </div>
                     <div class="d-flex flex-column w-100">
                       <span class="text-grey-darken-1">คำนำหน้า</span>
@@ -201,6 +213,7 @@ const id_card = ref(null);
 const nickname = ref(null);
 const phone = ref(null);
 const email = ref(null);
+const picture = ref(null);
 
 const genderList = ref([]);
 const titles = ref([
@@ -226,20 +239,31 @@ const getGender = async () => {
       console.error(e);
     });
 };
+
+const selectedFiles = ref([]);
+const fileInput = ref(null);
+
 const updateInfo = async () => {
   isLoading.value = true;
+  if (!selectedFiles.value) return;
+  const files = selectedFiles.value.map((e) => e.file);
+  const formData = new FormData();
+  formData.append("pd_id", pd_id.value);
+  formData.append("gender", gender.value);
+  formData.append("title", title.value);
+  formData.append("first_name", fname.value);
+  formData.append("last_name", lname.value);
+  formData.append("id_card", id_card.value);
+  formData.append("nickname", nickname.value);
+  formData.append("phone", phone.value);
+  formData.append("email", email.value);
+  formData.append(`images[]`, files[0]);
+  formData.append("csrf_token_ci_gen", getCookie("csrf_cookie_ci_gen"));
   await api
-    .post("/api/Personal/updateInfo", {
-      pd_id: pd_id.value,
-      gender: gender.value,
-      title: title.value,
-      first_name: fname.value,
-      last_name: lname.value,
-      id_card: id_card.value,
-      nickname: nickname.value,
-      phone: phone.value,
-      email: email.value,
-      csrf_token_ci_gen: getCookie("csrf_cookie_ci_gen"),
+    .post("/api/Personal/updateInfo", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     })
     .then((e) => {
       return e.data;
@@ -254,6 +278,7 @@ const updateInfo = async () => {
       push.error("เกิดข้อผิดพลาดจากระบบไม่สามารถเชื่อมต่อได้ในขณะนี้");
       console.error(e);
     });
+
   setTimeout(() => {
     isLoading.value = false;
   }, 400);
@@ -276,8 +301,35 @@ const getInfo = async () => {
     nickname.value = data?.data?.name?.nickname;
     phone.value = data?.data?.info?.phone;
     email.value = data?.data?.info?.email;
+    picture.value = data?.data?.picture;
   }
 };
+
+// 📌 ฟังก์ชันเมื่อผู้ใช้เลือกไฟล์
+const onFileChange = (event) => {
+  selectedFiles.value = [];
+  const files = Array.from(event.target.files);
+  files.forEach((file) => {
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        selectedFiles.value.push({ file, preview: e.target.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+};
+
+// 📌 ฟังก์ชันลบไฟล์ที่เลือก
+const removeFile = (index) => {
+  selectedFiles.value.splice(index, 1);
+};
+
+// 📌 อ้างอิง input file แบบซ่อน
+const openFilePicker = () => {
+  fileInput.value.click();
+};
+
 onMounted(() => {
   getInfo();
   getGender();

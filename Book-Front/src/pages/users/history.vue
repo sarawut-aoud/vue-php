@@ -22,18 +22,26 @@
                 <status-chip :status="item.status" />
               </template>
               <template v-slot:item.order_number="{ item }">
-                <router-custom :theme="theme" :path="'/payments?_i=' + item.order_number">
+                <router-custom :theme="theme" :path="'/payments/' + item.order_number">
                   <template #default> #{{ item.order_number }} </template>
                 </router-custom>
               </template>
               <template v-slot:item.manage="{ item }">
                 <div class="d-flex ga-2 align-center justify-center">
-                  <v-btn
-                    prepend-icon="mdi-package-variant"
-                    color="primary"
-                    variant="outlined"
-                    >รายละเอียดคำสั่งซื้อ
-                  </v-btn>
+                  <router-custom
+                    :theme="theme"
+                    :path="'/payments/' + item.order_number"
+                  >
+                    <template #default>
+                      <v-btn
+                        prepend-icon="mdi-package-variant"
+                        color="primary"
+                        variant="outlined"
+                        >รายละเอียดคำสั่งซื้อ
+                      </v-btn>
+                    </template>
+                  </router-custom>
+
                   <template v-if="item.status == 'pending'">
                     <v-btn
                       prepend-icon="mdi-cloud-upload"

@@ -166,13 +166,14 @@ class Orders extends RestAPI
                 'total_price' => $req->total
             ]);
             $last_id = $this->db->insert_id();
-            $this->db->update('swtar_reread.orders_payment', ['order_number' => date('Ymd') . str_pad($last_id, 4, 0, STR_PAD_LEFT)], ['id' => $last_id]);
+            $number = date('Ymd') . str_pad($last_id, 4, 0, STR_PAD_LEFT);
+            $this->db->update('swtar_reread.orders_payment', ['order_number' =>  $number], ['id' => $last_id]);
             foreach ($req->order_id as $id) {
                 $this->db->update('swtar_reread.orders', ['status' => 'paid', 'order_payment_id' => $last_id], ['id' => $id]);
             }
 
 
-            self::setRes("SUCCESS", 200);
+            self::setRes("SUCCESS", 200, ['order_number' =>  $number]);
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);
         }
@@ -211,6 +212,65 @@ class Orders extends RestAPI
             $this->db->update('swtar_reread.orders', ['status' => 'canceled'], ['order_payment_id' => $id]);
 
             self::setRes('SUCCESS', 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
+    public function getOrderPayment_get()
+    {
+        try {
+            $req = (object)$this->input->get();
+
+            $result = $this->db->query(
+                "SELECT a.id as _oid ,a.order_number,a.created_at as date_paid, b.* FROM swtar_reread.orders_payment  a 
+                LEFT JOIN swtar_reread.orders b ON b.order_payment_id = a.id AND a.pd_id = b.pd_id
+                WHERE a.pd_id = ? AND a.order_number = ?",
+                [$this->pd_id, $req->order_number]
+            )->result();
+
+            $result = array_map(function ($e) {
+                $_p = $this->db->get_where('swtar_reread.products', ['id' => $e->product_id])->row();
+                return [
+                    '_i' => (int)$e->_oid,
+                    'product' => [
+                        'no' =>   $_p->p_no,
+                        'name' =>   $_p->p_name,
+                        'detail' =>   $_p->p_detail,
+                        'price' => (float)  $e->total_price,
+                        'discount' => (float)  $e->discount,
+                        'cate_id' => array_map(function ($e) {
+                            return [
+                                '_i' => (int) $e->id,
+                                'name' => $e->cate_name,
+                            ];
+                        }, $this->db->query("SELECT a.*
+                    FROM swtar_reread.category a 
+                    LEFT JOIN swtar_reread.products_cate b ON b.cate_id = a.id
+                    WHERE b.p_id = ?", [$_p->id])->result()),
+                        'picture' => array_map(function ($e) {
+                            return [
+                                '_i' => (int) $e->id,
+                                'path' => '/api' . substr($e->picture, 1),
+                            ];
+                        }, $this->db->query("SELECT a.*
+                    FROM swtar_reread.product_image a 
+                    WHERE a.p_id = ?", [$_p->id])->result()),
+                        'path_group' => array_map(function ($e) {
+                            return '/api' . ($e->picture);
+                        }, $this->db->query("SELECT a.*
+                    FROM swtar_reread.product_image a 
+                    WHERE a.p_id = ?", [$_p->id])->result()),
+                    ],
+                ];
+            }, $result);
+            $exist = $this->db->query("SELECT * FROM swtar_reread.orders_payment WHERE order_number = ?", [$req->order_number])->row();
+
+            self::setRes($result, 200, [
+                'order_number' => $req->order_number,
+                'status' => $exist->status,
+                'discount' => round($exist->discount, 2),
+                'total_price' => round($exist->total_price, 2),
+            ]);
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);
         }

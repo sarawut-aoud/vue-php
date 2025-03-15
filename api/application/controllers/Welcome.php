@@ -1,10 +1,12 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Welcome extends CI_Controller {
+class Welcome extends CI_Controller
+{
 
 	public function index()
 	{
-		echo '<pre>';print_r(1);die;
+		echo "WELCOME ";
+		die;
 	}
 }
