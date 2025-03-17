@@ -1,9 +1,16 @@
 <template>
-  <v-card>
-    <v-tabs v-model="tab" color="info">
-      <v-tab @click="getListProduct()" :value="'all'">ทั้งหมด</v-tab>
+  <v-card rounded="lg">
+    <v-tabs v-model="tab" color="brown-darken-1">
+      <v-tab style="font-size: 16px" @click="getListProduct()" :value="'all'"
+        >ทั้งหมด</v-tab
+      >
       <template v-for="item in catelists">
-        <v-tab @click="getListProduct(item._i)" :value="item._i">{{ item.name }}</v-tab>
+        <v-tab
+          style="font-size: 16px"
+          @click="getListProduct(item._i)"
+          :value="item._i"
+          >{{ item.name }}</v-tab
+        >
       </template>
     </v-tabs>
 
@@ -55,7 +62,11 @@
                         </v-chip>
                       </div>
                       <div class="d-flex justify-space-between align-center">
-                        <v-btn border rounded="lg" @click="openDetail(item?._i)"
+                        <v-btn
+                          color="brown"
+                          border
+                          rounded="lg"
+                          @click="openDetail(item?._i)"
                           >รายละเอียด</v-btn
                         >
                         <v-btn
@@ -140,7 +151,11 @@
                           </v-chip>
                         </div>
                         <div class="d-flex justify-space-between">
-                          <v-btn border rounded="lg" @click="openDetail(item?._i)"
+                          <v-btn
+                            color="brown"
+                            border
+                            rounded="lg"
+                            @click="openDetail(item?._i)"
                             >รายละเอียด</v-btn
                           >
                           <v-btn
@@ -238,7 +253,12 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <v-btn class="ms-auto" text="ปิด" @click="dialog_deatail = false"></v-btn>
+        <v-btn
+          class="ms-auto"
+          text="ปิด"
+          color="brown-darken-1"
+          @click="dialog_deatail = false"
+        ></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

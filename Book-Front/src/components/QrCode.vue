@@ -64,7 +64,9 @@ onMounted(() => {
   <div class="d-flex ga-2 w-100 pa-2">
     <div class="w-100 d-flex flex-column">
       <div class="text-h5 text-center">QR-Code สำหรับชำระเงิน</div>
-      <v-img cover src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
+      <div style="width: 500px" class="mx-auto">
+        <v-img cover src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
+      </div>
     </div>
 
     <div class="w-100 d-flex flex-column">
@@ -81,7 +83,9 @@ onMounted(() => {
             rounded="lg"
             >อัปโหลดหลักฐานใหม่</v-btn
           >
-          <v-img rounded="lg" cover :src="selectedFiles[0]?.preview"></v-img>
+          <div style="width: 500px" class="mx-auto">
+            <v-img rounded="lg" cover :src="selectedFiles[0]?.preview"></v-img>
+          </div>
         </div>
       </template>
       <template v-else>

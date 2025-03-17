@@ -107,10 +107,10 @@
           <v-btn @click="carts = !carts" stacked flat>
             <template v-if="cartCount > 0">
               <v-badge :content="cartCount" color="red">
-                <v-icon icon="mdi-cart" size="large"></v-icon>
+                <v-icon icon="mdi-cart" color="brown-darken-1" size="large"></v-icon>
               </v-badge>
             </template>
-            <template v-else><v-icon icon="mdi-cart" size="large"></v-icon></template>
+            <template v-else><v-icon icon="mdi-cart" color="brown-darken-1" size="large"></v-icon></template>
           </v-btn>
         </div>
       </template>

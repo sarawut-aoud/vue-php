@@ -4,180 +4,189 @@
       <App-header @themes="getTheme"></App-header>
       <v-main style="padding-top: 100px">
         <v-container>
-          <v-tabs v-model="tabs" color="primary">
-            <v-tab value="info">ข้อมูลส่วนตัว</v-tab>
-            <v-tab value="address">ที่อยู่จัดส่ง</v-tab>
-            <v-tab value="setting">ตั้งค่าส่วนตัว</v-tab>
-          </v-tabs>
-          <v-card>
-            <v-card-text>
-              <v-window v-model="tabs">
-                <v-window-item value="info">
-                  <div class="d-flex gap-2 justify-between w-100 ga-3 pa-2">
-                    <div class="d-flex flex-column ga-2 justify-start h-100">
-                      <template v-if="picture && selectedFiles.length==0">
-                        <v-img rounded="lg" :width="300" cover :src="picture"></v-img>
-                      </template>
-                      <v-img
-                        v-else
-                        rounded="lg"
-                        :width="300"
-                        cover
-                        :src="selectedFiles[0]?.preview ?? '/src/assets/user.png'"
-                      ></v-img>
-                      <input
-                        type="file"
-                        ref="fileInput"
-                        accept="image/*"
-                        hidden
-                        @change="onFileChange"
-                      />
-                      <v-btn rounded="lg" @click="openFilePicker"
-                        >เปลี่ยนรูปโปรไฟล์</v-btn
-                      >
-                    </div>
-                    <div class="d-flex flex-column w-100">
-                      <span class="text-grey-darken-1">คำนำหน้า</span>
-                      <v-select
-                        v-model="title"
-                        clearable
-                        label="คำนำหน้า"
-                        variant="solo"
-                        :items="titles"
-                      ></v-select>
-                      <span class="text-grey-darken-1">เพศ</span>
-                      <v-select
-                        v-model="gender"
-                        clearable
-                        label="เพศ"
-                        variant="solo"
-                        :items="genderList"
-                        item-title="name"
-                        item-value="_i"
-                      ></v-select>
-                      <span class="text-grey-darken-1">ชื่อ</span>
-                      <v-text-field
-                        v-model="fname"
-                        clearable
-                        label="ชื่อ"
-                        variant="solo"
-                      ></v-text-field>
-                      <span class="text-grey-darken-1">นามสกุล</span>
-                      <v-text-field
-                        v-model="lname"
-                        clearable
-                        label="นามสกุล"
-                        variant="solo"
-                      ></v-text-field>
-                      <span class="text-grey-darken-1">ชื่อเล่น (ถ้ามี)</span>
-                      <v-text-field
-                        v-model="nickname"
-                        clearable
-                        label="ชื่อเล่น"
-                        variant="solo"
-                      ></v-text-field>
-                      <span class="text-grey-darken-1">อีเมล</span>
-                      <v-text-field
-                        v-model="email"
-                        clearable
-                        label="อีเมล"
-                        variant="solo"
-                      ></v-text-field>
-                      <span class="text-grey-darken-1">เบอร์โทรศัพท์</span>
-                      <v-text-field
-                        v-model="phone"
-                        clearable
-                        label="เบอร์โทรศัพท์"
-                        maxlength="10"
-                        variant="solo"
-                      ></v-text-field>
-                      <span class="text-grey-darken-1">เลขที่บัตรประชาชน</span>
-                      <v-text-field
-                        v-model="id_card"
-                        clearable
-                        label="เลขที่บัตรประชาชน"
-                        variant="solo"
-                      ></v-text-field>
-                      <div class="d-flex ga-3 justify-end">
-                        <v-btn
-                          @click="updateInfo"
-                          :loading="isLoading"
-                          :disabled="isLoading"
-                          color="success"
-                          >บันทึก</v-btn
+          <v-card falt width="auto" rounded="lg">
+            <v-tabs v-model="tabs" color="brown-darken-1">
+              <v-tab value="info">ข้อมูลส่วนตัว</v-tab>
+              <v-tab value="address">ที่อยู่จัดส่ง</v-tab>
+              <v-tab value="setting">ตั้งค่าส่วนตัว</v-tab>
+            </v-tabs>
+            <v-card>
+              <v-card-text>
+                <v-window v-model="tabs">
+                  <v-window-item value="info">
+                    <div class="d-flex gap-2 justify-between w-100 ga-3 pa-2">
+                      <div class="d-flex flex-column ga-2 justify-start h-100">
+                        <template v-if="picture && selectedFiles.length == 0">
+                          <v-img rounded="lg" :width="300" cover :src="picture"></v-img>
+                        </template>
+                        <v-img
+                          v-else
+                          rounded="lg"
+                          :width="300"
+                          cover
+                          :src="selectedFiles[0]?.preview ?? '/src/assets/user.png'"
+                        ></v-img>
+                        <input
+                          type="file"
+                          ref="fileInput"
+                          accept="image/*"
+                          hidden
+                          @change="onFileChange"
+                        />
+                        <v-btn rounded="lg" @click="openFilePicker" color="brown"
+                          >เปลี่ยนรูปโปรไฟล์</v-btn
                         >
                       </div>
+                      <div class="d-flex flex-column w-100">
+                        <span class="text-grey-darken-1">คำนำหน้า</span>
+                        <v-select
+                          v-model="title"
+                          clearable
+                          label="คำนำหน้า"
+                          variant="solo"
+                          :items="titles"
+                        ></v-select>
+                        <span class="text-grey-darken-1">เพศ</span>
+                        <v-select
+                          v-model="gender"
+                          clearable
+                          label="เพศ"
+                          variant="solo"
+                          :items="genderList"
+                          item-title="name"
+                          item-value="_i"
+                        ></v-select>
+                        <span class="text-grey-darken-1">ชื่อ</span>
+                        <v-text-field
+                          v-model="fname"
+                          clearable
+                          label="ชื่อ"
+                          variant="solo"
+                        ></v-text-field>
+                        <span class="text-grey-darken-1">นามสกุล</span>
+                        <v-text-field
+                          v-model="lname"
+                          clearable
+                          label="นามสกุล"
+                          variant="solo"
+                        ></v-text-field>
+                        <span class="text-grey-darken-1">ชื่อเล่น (ถ้ามี)</span>
+                        <v-text-field
+                          v-model="nickname"
+                          clearable
+                          label="ชื่อเล่น"
+                          variant="solo"
+                        ></v-text-field>
+                        <span class="text-grey-darken-1">อีเมล</span>
+                        <v-text-field
+                          v-model="email"
+                          clearable
+                          label="อีเมล"
+                          variant="solo"
+                        ></v-text-field>
+                        <span class="text-grey-darken-1">เบอร์โทรศัพท์</span>
+                        <v-text-field
+                          v-model="phone"
+                          clearable
+                          label="เบอร์โทรศัพท์"
+                          maxlength="10"
+                          variant="solo"
+                        ></v-text-field>
+                        <span class="text-grey-darken-1">เลขที่บัตรประชาชน</span>
+                        <v-text-field
+                          v-model="id_card"
+                          clearable
+                          label="เลขที่บัตรประชาชน"
+                          variant="solo"
+                        ></v-text-field>
+                        <div class="d-flex ga-3 justify-end">
+                          <v-btn
+                            @click="updateInfo"
+                            :loading="isLoading"
+                            :disabled="isLoading"
+                            color="success"
+                            >บันทึก</v-btn
+                          >
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </v-window-item>
-                <v-window-item value="address">
-                  <div class="d-flex gap-2 justify-between w-100 ga-3 pa-2">
-                    <div class="d-flex flex-column w-100">
-                      <v-textarea clearable label="ที่อยู่" variant="solo"></v-textarea>
-                      <div
-                        class="ga-2"
-                        style="display: grid; grid-template-columns: repeat(3, 1fr)"
-                      >
-                        <v-text-field
-                          clearable
-                          label="เลขที่"
-                          variant="solo"
-                        ></v-text-field>
-                        <v-text-field
-                          clearable
-                          label="หมู่ที่"
-                          variant="solo"
-                        ></v-text-field>
-                        <v-text-field
-                          clearable
-                          label="เลขที่ห้อง"
-                          variant="solo"
-                        ></v-text-field>
-                        <v-text-field
-                          clearable
-                          label="อาคาร/ตึก"
-                          variant="solo"
-                        ></v-text-field>
-                        <v-text-field
-                          clearable
-                          label="ชั้น"
-                          variant="solo"
-                        ></v-text-field>
-                        <v-text-field clearable label="ถนน" variant="solo"></v-text-field>
-                      </div>
-                      <div class="d-flex flex-wrap ga-2">
-                        <v-text-field
-                          clearable
-                          label="ตำบล"
-                          variant="solo"
-                        ></v-text-field>
-                        <v-text-field
-                          clearable
-                          label="อำเภอ"
-                          variant="solo"
-                        ></v-text-field>
-                        <v-text-field
-                          clearable
-                          label="จังหวัด"
-                          variant="solo"
-                        ></v-text-field>
-                        <v-text-field
-                          clearable
-                          label="รหัสไปรษณีย์"
-                          variant="solo"
-                        ></v-text-field>
-                      </div>
-                      <div class="d-flex ga-3 justify-end">
-                        <v-btn color="success" :loading="isLoading" :disabled="isLoading"
-                          >บันทึก</v-btn
+                  </v-window-item>
+                  <v-window-item value="address">
+                    <div class="d-flex gap-2 justify-between w-100 ga-3 pa-2">
+                      <div class="d-flex flex-column w-100">
+                        <v-textarea clearable label="ที่อยู่" variant="solo"></v-textarea>
+                        <div
+                          class="ga-2"
+                          style="display: grid; grid-template-columns: repeat(3, 1fr)"
                         >
+                          <v-text-field
+                            clearable
+                            label="เลขที่"
+                            variant="solo"
+                          ></v-text-field>
+                          <v-text-field
+                            clearable
+                            label="หมู่ที่"
+                            variant="solo"
+                          ></v-text-field>
+                          <v-text-field
+                            clearable
+                            label="เลขที่ห้อง"
+                            variant="solo"
+                          ></v-text-field>
+                          <v-text-field
+                            clearable
+                            label="อาคาร/ตึก"
+                            variant="solo"
+                          ></v-text-field>
+                          <v-text-field
+                            clearable
+                            label="ชั้น"
+                            variant="solo"
+                          ></v-text-field>
+                          <v-text-field
+                            clearable
+                            label="ถนน"
+                            variant="solo"
+                          ></v-text-field>
+                        </div>
+                        <div class="d-flex flex-wrap ga-2">
+                          <v-text-field
+                            clearable
+                            label="ตำบล"
+                            variant="solo"
+                          ></v-text-field>
+                          <v-text-field
+                            clearable
+                            label="อำเภอ"
+                            variant="solo"
+                          ></v-text-field>
+                          <v-text-field
+                            clearable
+                            label="จังหวัด"
+                            variant="solo"
+                          ></v-text-field>
+                          <v-text-field
+                            clearable
+                            label="รหัสไปรษณีย์"
+                            variant="solo"
+                          ></v-text-field>
+                        </div>
+                        <div class="d-flex ga-3 justify-end">
+                          <v-btn
+                            color="success"
+                            :loading="isLoading"
+                            :disabled="isLoading"
+                            >บันทึก</v-btn
+                          >
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </v-window-item>
-                <v-window-item value="setting"></v-window-item>
-              </v-window>
-            </v-card-text>
+                  </v-window-item>
+                  <v-window-item value="setting"></v-window-item>
+                </v-window>
+              </v-card-text>
+            </v-card>
           </v-card>
         </v-container>
       </v-main>

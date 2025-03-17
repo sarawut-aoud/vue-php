@@ -37,11 +37,18 @@ const getCountCart = async () => {
         uid: globalitem.value?.ui,
       },
     });
+    let noti = 0;
+    let text = "";
     if (data.data?.length > 0) {
       cartCount.value = data.data?.length;
+      noti = data.data?.length;
+      if (noti > 0) {
+        text = `(${noti})`;
+      }
     } else {
       cartCount.value = 0;
     }
+    document.getElementsByTagName("title")[0].innerHTML = `${text} ReRead`;
   }
 };
 
@@ -51,7 +58,7 @@ provide("cartCount", cartCount);
 
 onMounted(() => {
   getInfo();
-  getCountCart()
+  getCountCart();
 });
 </script>
 
@@ -69,5 +76,8 @@ onMounted(() => {
   z-index: 3000 !important;
   position: relative;
   /* หรือ absolute/fixed ถ้าจำเป็น */
+}
+body .v-main {
+  background: #daad76 !important;
 }
 </style>

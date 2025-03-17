@@ -28,14 +28,11 @@
               </template>
               <template v-slot:item.manage="{ item }">
                 <div class="d-flex ga-2 align-center justify-center">
-                  <router-custom
-                    :theme="theme"
-                    :path="'/payments/' + item.order_number"
-                  >
+                  <router-custom :theme="theme" :path="'/payments/' + item.order_number">
                     <template #default>
                       <v-btn
                         prepend-icon="mdi-package-variant"
-                        color="primary"
+                        color="brown"
                         variant="outlined"
                         >รายละเอียดคำสั่งซื้อ
                       </v-btn>
@@ -43,12 +40,23 @@
                   </router-custom>
 
                   <template v-if="item.status == 'pending'">
-                    <v-btn
-                      prepend-icon="mdi-cloud-upload"
-                      color="warning"
-                      variant="outlined"
-                      >แนบหลักฐานการชำระเงิน
-                    </v-btn>
+                    <v-dialog width="1000">
+                      <template v-slot:activator="{ props: activatorProps }">
+                        <v-btn
+                          v-bind="activatorProps"
+                          prepend-icon="mdi-cloud-upload"
+                          color="warning"
+                          variant="outlined"
+                          >แนบหลักฐานการชำระเงิน
+                        </v-btn>
+                      </template>
+
+                      <template v-slot:default="{ isActive }">
+                        <v-card title="แนบหลักฐานการชำระเงิน" rounded="lg">
+                          <qr-code :order_number="item.order_number"></qr-code>
+                        </v-card>
+                      </template>
+                    </v-dialog>
                     <v-btn
                       @click="cancelOrder(item._i)"
                       :loading="loading_btn_cancel"

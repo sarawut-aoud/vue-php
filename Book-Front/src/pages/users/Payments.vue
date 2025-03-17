@@ -79,25 +79,25 @@
                       </div>
                     </div>
                   </v-card-item>
-                  <v-card-action>
-                    <div class="d-flex flex-column align-end ga-2 w-100 pa-2 text-h5">
-                      <v-divider class="w-100"></v-divider>
-                      <div class="d-flex justify-space-between w-25">
-                        <div class="w-100">รวมส่วนลด</div>
-                        <div class="w-100 text-end">{{ options.discount }} บาท</div>
-                      </div>
-                      <div class="d-flex justify-space-between w-25">
-                        <div class="w-100">รวมราคาสุทธิ</div>
-                        <div class="w-100 text-end">{{ options.total_price }} บาท</div>
-                      </div>
-                    </div>
-                    <template v-if="options.status == 'pending'">
-                      <QrCode></QrCode>
-                    </template>
-                  </v-card-action>
                 </v-card>
               </template>
             </v-card-item>
+            <v-card-action>
+              <div class="d-flex flex-column align-end ga-2 w-100 pa-2 text-h5">
+                <v-divider class="w-100"></v-divider>
+                <div class="d-flex justify-space-between w-25">
+                  <div class="w-100">รวมส่วนลด</div>
+                  <div class="w-100 text-end">{{ options?.discount }} บาท</div>
+                </div>
+                <div class="d-flex justify-space-between w-25">
+                  <div class="w-100">รวมราคาสุทธิ</div>
+                  <div class="w-100 text-end">{{ options?.total_price }} บาท</div>
+                </div>
+              </div>
+              <template v-if="options?.status == 'pending'">
+                <QrCode></QrCode>
+              </template>
+            </v-card-action>
           </v-card>
         </v-container>
       </v-main>
