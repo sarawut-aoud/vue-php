@@ -56,8 +56,24 @@ const clickUpload = async () => {
   }, 300);
 };
 
+const loadingOrder = ref(false);
+const options = ref(null);
+const getOrderPayment = async () => {
+  loadingOrder.value = true;
+  let { data } = await api.get("/api/Orders/getOrderPayment", {
+    params: {
+      order_number: props.order,
+    },
+  });
+  options.value = data?.options;
+  setTimeout(() => {
+    loadingOrder.value = false;
+  }, 500);
+};
+
 onMounted(() => {
   getSetting();
+  getOrderPayment();
 });
 </script>
 <template>
@@ -70,6 +86,17 @@ onMounted(() => {
     </div>
 
     <div class="w-100 d-flex flex-column">
+      <div class="d-flex flex-column align-end ga-2 w-100 pa-2 text-h5">
+        <div class="d-flex justify-space-between w-100">
+          <div class="w-100">รวมส่วนลด</div>
+          <div class="w-100 text-end">{{ options?.discount }} บาท</div>
+        </div>
+        <div class="d-flex justify-space-between w-100">
+          <div class="w-100">รวมราคาสุทธิ</div>
+          <div class="w-100 text-end">{{ options?.total_price }} บาท</div>
+        </div>
+      </div>
+      <v-divider class="w-100"></v-divider>
       <div class="text-h5 text-center">อัปโหลดหลักฐานการชำระเงิน</div>
       <template v-if="selectedFiles.length > 0">
         <div class="position-relative">

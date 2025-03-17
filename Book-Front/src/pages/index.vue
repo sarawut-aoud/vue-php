@@ -36,7 +36,7 @@ const getTheme = (e) => {
               <div style="font-size: 24px; font-weight: 600">ReRead Co.,Ltd.</div>
               <div class="w-100 justify-center d-flex">
                 <v-card width="1500" rounded="xl" class="elevation-5">
-                  <v-img :src="'/src/assets/dashboard.jpg'" cover></v-img>
+                  <v-img :src="'/api/assets/dashboard.jpg'" cover></v-img>
                 </v-card>
               </div>
             </div>

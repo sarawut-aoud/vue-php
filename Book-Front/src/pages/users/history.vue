@@ -53,7 +53,7 @@
 
                       <template v-slot:default="{ isActive }">
                         <v-card title="แนบหลักฐานการชำระเงิน" rounded="lg">
-                          <qr-code :order_number="item.order_number"></qr-code>
+                          <qr-code :order="item.order_number"></qr-code>
                         </v-card>
                       </template>
                     </v-dialog>

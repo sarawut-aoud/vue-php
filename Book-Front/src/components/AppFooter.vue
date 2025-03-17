@@ -11,7 +11,7 @@
                   width="70"
                   height="70"
                   border=""
-                  :src="'/src/assets/9359415.png'"
+                  :src="'/api/assets/9359415.png'"
                 ></v-img>
                 <div class="w-100 ms-5">Mobile Banking</div>
               </div>
@@ -19,7 +19,7 @@
                 <v-img
                   width="70"
                   height="70"
-                  :src="'/src/assets/PromptPay-logo.png'"
+                  :src="'/api/assets/PromptPay-logo.png'"
                 ></v-img>
                 <div class="w-100 ms-5">Promptpay</div>
               </div>
@@ -31,7 +31,7 @@
                   width="70"
                   height="70"
                   class="border rounded-lg"
-                  :src="'/src/assets/delivery.jpg'"
+                  :src="'/api/assets/delivery.jpg'"
                 ></v-img>
                 <div class="w-100 ms-5">ไปรษณีย์ไทย</div>
               </div>
@@ -40,19 +40,19 @@
                   width="70"
                   height="70"
                   class="border rounded-lg"
-                  :src="'/src/assets/flash.png'"
+                  :src="'/api/assets/flash.png'"
                 ></v-img>
                 <v-img
                   width="70"
                   height="70"
                   class="border rounded-lg"
-                  :src="'/src/assets/kerry.png'"
+                  :src="'/api/assets/kerry.png'"
                 ></v-img>
                 <v-img
                   width="70"
                   height="70"
                   class="border rounded-lg"
-                  :src="'/src/assets/0600-ems-vietnam.png'"
+                  :src="'/api/assets/0600-ems-vietnam.png'"
                 ></v-img>
               </div>
             </div>
@@ -67,7 +67,7 @@
                   width="70"
                   height="70"
                   border=""
-                  :src="'/src/assets/line.png'"
+                  :src="'/api/assets/line.png'"
                 ></v-img
               ></a>
               <div class="w-100 ms-5">
@@ -80,7 +80,7 @@
                   width="70"
                   height="70"
                   border=""
-                  :src="'/src/assets/tiktok.png'"
+                  :src="'/api/assets/tiktok.png'"
                 ></v-img
               ></a>
               <div class="w-100 ms-5">
