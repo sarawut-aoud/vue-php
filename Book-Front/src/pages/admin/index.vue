@@ -13,6 +13,7 @@
             value="dashboard"
           ></v-list-item>
           <v-list-item
+            v-if="false"
             @click="updateModel('users')"
             :active="tabmenu == 'users'"
             prepend-icon="mdi-account-group"
@@ -43,28 +44,31 @@
             value="products"
           ></v-list-item>
           <v-list-item
+            v-if="false"
             @click="updateModel('setting')"
             :active="tabmenu == 'setting'"
             prepend-icon=" mdi-cog"
             title="ตั้งค่าการชำระเงิน"
             value="setting"
           ></v-list-item>
-          <v-divider class="mt-5"></v-divider>
-          <v-list-subheader>Report</v-list-subheader>
-          <v-list-item
-            @click="updateModel('report_day')"
-            :active="tabmenu == 'report_day'"
-            prepend-icon="mdi-file"
-            title="สรุปยอด วันนี้"
-            value="report_day"
-          ></v-list-item>
-          <v-list-item
-            @click="updateModel('summary')"
-            :active="tabmenu == 'summary'"
-            prepend-icon="mdi-file"
-            title="สรุปยอด วัน/เดือน/ปี"
-            value="summary"
-          ></v-list-item>
+          <template v-if="false">
+            <v-divider class="mt-5"></v-divider>
+            <v-list-subheader>Report</v-list-subheader>
+            <v-list-item
+              @click="updateModel('report_day')"
+              :active="tabmenu == 'report_day'"
+              prepend-icon="mdi-file"
+              title="สรุปยอด วันนี้"
+              value="report_day"
+            ></v-list-item>
+            <v-list-item
+              @click="updateModel('summary')"
+              :active="tabmenu == 'summary'"
+              prepend-icon="mdi-file"
+              title="สรุปยอด วัน/เดือน/ปี"
+              value="summary"
+            ></v-list-item>
+          </template>
         </v-list>
       </v-navigation-drawer>
       <v-main>

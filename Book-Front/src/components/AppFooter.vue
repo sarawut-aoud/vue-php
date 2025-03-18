@@ -1,7 +1,7 @@
 <template>
   <v-footer border>
     <div class="d-flex ga-2 align-start w-100 flex-column px-10 pt-5">
-      <div class="d-flex w-100 ga-2 align-start">
+      <div v-if="user" class="d-flex w-100 ga-2 align-start">
         <div class="d-flex ga-2 w-100 flex-column">
           <div>ช่องทางการชำระเงิน / Delivery</div>
           <div class="d-flex ga-10">
@@ -92,7 +92,7 @@
           </div>
         </div>
       </div>
-      <v-divider class="w-100"></v-divider>
+      <v-divider v-if="user" class="w-100"></v-divider>
       <div class="w-100 d-flex justify-end ga-2 align-end">
         <div>บริษัท รีรี้ด จำกัด (Re Read Co., Ltd.)</div>
         <div>1361/315 ถนนพหลโยธิน</div>
@@ -102,4 +102,18 @@
   </v-footer>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref, onMounted } from "vue";
+import { useLocalStorage } from "@/composables/useLocalStorage";
+import { useCookie } from "@/composables/useCookie";
+import { useJWT } from "@/composables/useJWT";
+const { deleteItem, isItem } = useLocalStorage();
+const { deleteCookie, getCookie } = useCookie();
+const { getItem } = useJWT();
+const globalitem = ref(getItem(getCookie("jwt")));
+const user = ref(true);
+
+onMounted(() => {
+  if (globalitem.value?.n == "admin") user.value = false;
+});
+</script>

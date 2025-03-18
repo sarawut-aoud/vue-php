@@ -35,7 +35,7 @@
           <v-card min-width="250" rounded="lg">
             <v-list>
               <div class="d-flex flex-column ga-2 w-100">
-                <v-list-item v-if="!!globalitem || globalitem.n != 'admin'">
+                <v-list-item v-if="!!globalitem && globalitem.n != 'admin'">
                   <Router-custom :theme="themes" :path="'/users/info'">
                     <template #default>
                       <v-btn
@@ -49,7 +49,7 @@
                   </Router-custom>
                 </v-list-item>
 
-                <v-list-item v-if="!!globalitem || globalitem.n != 'admin'">
+                <v-list-item v-if="!!globalitem && globalitem.n != 'admin'">
                   <Router-custom :theme="themes" :path="'/users/history'">
                     <template #default>
                       <v-btn

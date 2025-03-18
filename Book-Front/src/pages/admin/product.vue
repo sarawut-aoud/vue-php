@@ -93,6 +93,7 @@
                     rounded="lg"
                     variant="flat"
                     color="warning"
+                    @click="getProductByid(item._i)"
                   ></v-btn>
                   <v-btn
                     @click="remove(item._i)"
@@ -334,7 +335,12 @@ const uploadImage = async (id) => {
     push.error("เกิดข้อผิดพลาดในการอัปโหลด");
   }
 };
+const getProductByid = async () => {
+  dialog.value =true
 
+ 
+
+};
 const remove = async (id) => {
   Swal.fire({
     title: "ต้องการลบข้อมูลสินค้า ?",
