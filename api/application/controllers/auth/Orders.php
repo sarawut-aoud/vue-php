@@ -59,38 +59,37 @@ class Orders extends RestAPI
                 ];
             }, $result);
 
-            $quantity = array_sum(array_map(fn ($e) => $e['amount'], $result));
+            $deliver = array_sum(array_map(fn ($e) => $e['amount'], $result));
             $setting = $this->db->query("SELECT * FROM swtar_reread.setting_delivery ")->result();
-            $cost = self::calculateShippingCost($quantity, $setting);
-
+            $sum = 35;
+            $temp = [];
+            foreach ($setting as $key => $e) {
+                if ($e->operater == '<' && $e->amount < $deliver) {
+                    $sum = $e->price *  $deliver;
+                    $temp[] = 1;
+                }
+                if ($e->operater == '>' && $e->amount > $deliver) {
+                    $sum = $e->price *  $deliver;
+                    $temp[] = 2;
+                }
+                if ($e->operater == '<=' && $e->amount >=  $deliver) {
+                    $sum = $e->price *  $deliver;
+                    $temp[] = 3;
+                }
+                if ($e->operater == '>=' && $e->amount <= $deliver) {
+                    $sum = $e->price *  $deliver;
+                    $temp[] = 4;
+                }
+            }
 
             self::setRes($result, 200, [
-                'delivery' => $quantity* $cost,
-                'amount' => $quantity ,
+                'delivery' => $sum,
+                'amount' => $deliver,
+                'temp' => $temp,
             ]);
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);
         }
-    }
-    private function  calculateShippingCost($quantity, $rules)
-    {
-        foreach ($rules as $rule) {
-            switch ($rule->operater) {
-                case '<':
-                    if ($quantity < $rule->amount) return $rule->price;
-                    break;
-                case '>':
-                    if ($quantity > $rule->amount) return $rule->price;
-                    break;
-                case '<=':
-                    if ($quantity <= $rule->amount) return $rule->price;
-                    break;
-                case '>=':
-                    if ($quantity >= $rule->amount) return $rule->price;
-                    break;
-            }
-        }
-        return 35; // กรณีไม่เข้าเงื่อนไขใดเลย
     }
     public function pushCart_post()
     {

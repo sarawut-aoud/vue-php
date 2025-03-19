@@ -249,5 +249,6 @@ class RestAPI extends REST_Controller
     protected function setUserData($data)
     {
         $this->pd_id = $data->pd_id;
+        $this->login = $data->user_type == 9 ? 'admin' : 'emp';
     }
 }

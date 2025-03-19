@@ -27,7 +27,7 @@ class Products extends RestAPI
             self::sendResponse($e, __METHOD__);
         }
     }
-    public function getList_get()
+    public function getList_get($id = null)
     {
         try {
             $req = (object) $this->input->get();
@@ -35,6 +35,12 @@ class Products extends RestAPI
             $filter = '';
             if ($req->cate) {
                 $filter .= " AND b.cate_id = $req->cate";
+            }
+            if ($req->productId) {
+                $filter .= " AND a.id = $req->productId";
+            }
+            if ($id) {
+                $filter .= " AND a.id = $id";
             }
             $result = $this->db->query(
                 "SELECT a.* 
@@ -52,6 +58,7 @@ class Products extends RestAPI
                     'name' => $e->p_name,
                     'detail' => $e->p_detail,
                     'price' => (float)$e->p_price,
+                    'sold_out' => (bool)$e->so_out,
                     'cate_id' => array_map(function ($e) {
                         return [
                             '_i' => (int) $e->id,
@@ -78,7 +85,7 @@ class Products extends RestAPI
             }, $result);
 
 
-
+            if (!!$id)  self::setRes($result[0], 200);
 
             self::setRes($result, 200);
         } catch (Exception $e) {
@@ -133,6 +140,48 @@ class Products extends RestAPI
             self::sendResponse($e, __METHOD__);
         }
     }
+    public function update_post()
+    {
+        $this->validateAuth();
+
+        try {
+            $req = (object) $this->input->post();
+            if ($req->detail == 'null') $req->detail = NULL;
+            if (!$req->p_id) self::setErr('NOT FOUND', 404);
+            $exit = $this->db->get_where("swtar_reread.products", ['id' => $req->p_id])->row();
+            if (!$exit) self::setErr('NOT FOUND', 404);
+
+            $this->db->update('swtar_reread.products', [
+                'p_no' => $req->no,
+                'p_name' => $req->name,
+                'p_detail' => $req->detail ?? null,
+                'p_price' => $req->price,
+            ], [
+                'id' => $req->p_id
+            ]);
+
+
+            $cate_id = explode(',', $req->cate_id);
+            if (count($cate_id) > 0) {
+                foreach ($cate_id  as $id) {
+                    $this->db->update('swtar_reread.products_cate', ['cate_id' => $id], ['p_id' => $req->p_id]);
+                }
+            }
+            $files = $this->Upload->upload_images('uploads');
+
+
+            if (count($files) > 0) {
+                foreach ($files as $path) {
+                    $this->db->update('swtar_reread.product_image', ['picture' => $path], ['p_id' => $req->p_id]);
+                }
+            }
+
+
+            self::setRes("SUCCESS", 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
     public function remove_post($id)
     {
         try {
@@ -140,6 +189,19 @@ class Products extends RestAPI
             $exit = $this->db->query("SELECT * FROM swtar_reread.products WHERE id =?", [$id])->row();
             if (!$exit) self::setRes("NOT FOUNDs", 401);
             $this->db->update('swtar_reread.products', ['is_active' => 0], ['id' => $id]);
+            self::setRes("SUCCESS", 200);
+        } catch (Exception $e) {
+            self::sendResponse($e, __METHOD__);
+        }
+    }
+    public function updateSoldOut_post($id)
+    {
+        try {
+            if (!$id) self::setRes("INPUT ERROR", 401);
+            $exit = $this->db->query("SELECT * FROM swtar_reread.products WHERE id =?", [$id])->row();
+            if (!$exit) self::setRes("NOT FOUNDs", 401);
+            $item =  $exit->so_out == 1 ? 0 : 1;
+            $this->db->update('swtar_reread.products', ['so_out' =>  $item], ['id' => $id]);
             self::setRes("SUCCESS", 200);
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);

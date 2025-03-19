@@ -1,4 +1,29 @@
 <template>
+  <div class="px-2 py-2 mt-2">
+    <v-autocomplete
+      v-model="productId"
+      :loading="loadProduct"
+      :items="productsList"
+      @update:model-value="searchProduct"
+      item-title="name"
+      item-value="_i"
+      class="mx-auto"
+      density="comfortable"
+      menu-icon=""
+      placeholder="ค้นหา..."
+      prepend-inner-icon="mdi-magnify"
+      style="max-width: 500px"
+      theme="light"
+      variant="solo"
+      auto-select-first
+      item-props
+      rounded
+      hide-details=""
+      clearable=""
+      @keydown="keypressItem"
+      @click:clear="getListProduct(null)"
+    ></v-autocomplete>
+  </div>
   <v-card rounded="lg">
     <v-tabs v-model="tab" color="brown-darken-1">
       <v-tab style="font-size: 16px" @click="getListProduct()" :value="'all'"
@@ -69,15 +94,20 @@
                           @click="openDetail(item?._i)"
                           >รายละเอียด</v-btn
                         >
-                        <v-btn
-                          @click="pushCart(item?._i)"
-                          class="ms-auto"
-                          color="primary"
-                          size="small"
-                          variant="outlined"
-                          rounded="lg"
-                          icon=" mdi-cart-arrow-down"
-                        ></v-btn>
+                        <template v-if="!item?.sold_out">
+                          <v-btn
+                            @click="pushCart(item?._i)"
+                            class="ms-auto"
+                            color="primary"
+                            size="small"
+                            variant="outlined"
+                            rounded="lg"
+                            icon=" mdi-cart-arrow-down"
+                          ></v-btn>
+                        </template>
+                        <template v-else>
+                          <v-chip size="large" color="red" rounded="lg">SOLD OUT</v-chip>
+                        </template>
                       </div>
                     </div>
                   </v-card-actions>
@@ -241,14 +271,20 @@
               <div class="me-1">฿</div>
               <div>{{ temp?.price }}</div>
             </v-chip>
-            <v-btn
-              @click="pushCart(item?._i)"
-              color="primary"
-              size="small"
-              variant="outlined"
-              rounded="lg"
-              icon=" mdi-cart-arrow-down"
-            ></v-btn>
+            <template v-if="!temp?.sold_out">
+              <v-btn
+                @click="pushCart(temp?._i)"
+                class="ms-auto"
+                color="primary"
+                size="small"
+                variant="outlined"
+                rounded="lg"
+                icon=" mdi-cart-arrow-down"
+              ></v-btn>
+            </template>
+            <template v-else>
+              <v-chip size="large" color="red" rounded="lg">SOLD OUT</v-chip>
+            </template>
           </div>
         </div>
       </v-card-text>
@@ -265,7 +301,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted, inject } from "vue";
+import { ref, defineProps, onMounted, inject, watch } from "vue";
 import { useDisplay } from "vuetify";
 
 import { useJWT } from "@/composables/useJWT";
@@ -290,6 +326,12 @@ const props = defineProps({
     default: null,
   }, // รับรูปภาพจาก Parent
 });
+
+const productId = ref(null);
+const searchProduct = (value) => {
+  productId.value = value;
+};
+
 const productsList = ref([]);
 const getListProduct = async (cate = null) => {
   productsList.value = [];
@@ -297,6 +339,7 @@ const getListProduct = async (cate = null) => {
   let { data } = await api.get("/api/products/getList", {
     params: {
       cate: cate,
+      productId: productId.value,
     },
   });
   if (data?.data.length > 0) {
@@ -337,6 +380,20 @@ const openDetail = (id) => {
   temp.value = item[0];
 };
 
+watch(() => {
+  if (productId.value) {
+    getListProduct();
+  }
+});
+const resetProduct = () => {
+  productId.value = "";
+};
+const keypressItem = (e) => {
+  console.log(productId.value);
+  if (e.keyCode == 8) {
+    productId.value = null;
+  }
+};
 onMounted(() => {
   getList();
   getListProduct();

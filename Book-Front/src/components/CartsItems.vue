@@ -106,8 +106,12 @@
           <div class="w-100 text-end">{{ sum_discount }} บาท</div>
         </div>
         <div class="d-flex justify-space-between">
+          <div class="w-100">ค่าจัดสั่ง</div>
+          <div class="w-100 text-end">{{ delivery_amount }} บาท</div>
+        </div>
+        <div class="d-flex justify-space-between">
           <div class="w-100">ราคาสุทธิ</div>
-          <div class="w-100 text-end">{{ sum_total }} บาท</div>
+          <div class="w-100 text-end">{{ sum_total+delivery_amount }} บาท</div>
         </div>
         <v-divider></v-divider>
         <div class="mt-auto">
@@ -138,6 +142,7 @@ const localCarts = ref(props.carts);
 const getCountCart = inject("getCountCart");
 
 const myorders = ref([]);
+
 const getItemCart = async () => {
   getCountCart();
   let { data } = await api.get("/api/orders/getMyCart", {
@@ -147,8 +152,10 @@ const getItemCart = async () => {
   });
   if (data.data?.length > 0) {
     myorders.value = data.data;
+    delivery_amount.value = data.options?.delivery
   } else {
     myorders.value = [];
+    delivery_amount.value =0 
   }
 };
 
@@ -192,6 +199,7 @@ const sum_price = ref(0);
 const sum_discount = ref(0);
 const sum_total = ref(0);
 const order_id_group = ref([]);
+
 watch(() => {
   sum_price.value = 0;
   sum_total.value = 0;
@@ -206,6 +214,12 @@ watch(() => {
   }
 });
 
+
+const delivery_amount = ref(0);
+
+
+
+
 const payments = async () => {
   await api
     .post("/api/orders/paymentOrder", {
@@ -215,6 +229,7 @@ const payments = async () => {
       total: sum_total.value,
       order_id: order_id_group.value,
       discount: sum_discount.value,
+      delivery_amount: delivery_amount.value,
     })
     .then((rs) => {
       return rs.data;

@@ -26,6 +26,11 @@
             prepend-icon="mdi-order-bool-descending-variant"
             title="ออเดอร์"
             value="orders"
+          >
+            <template v-slot:append
+              ><v-badge v-if="listsCount > 0" color="red" floating :content="listsCount">
+                <v-icon icon="mdi-bell-ring" size="small" color="white"></v-icon>
+              </v-badge> </template
           ></v-list-item>
           <v-divider class="mt-5"></v-divider>
           <v-list-subheader>Mangement</v-list-subheader>
@@ -75,7 +80,7 @@
         <v-progress-linear
           class="w-100"
           v-if="loadingPage"
-          color="primary"
+          color="brown-darken-3"
           indeterminate
         ></v-progress-linear>
         <div class="pa-5">
@@ -112,7 +117,6 @@
     <Notification :item="item" />
   </Notivue>
 </template>
-
 <script setup>
 import { ref, onMounted, inject } from "vue";
 import api from "/utils/axios";
@@ -135,6 +139,7 @@ const theme = ref("light");
 const getTheme = (e) => {
   theme.value = e;
 };
+const listsCount = inject("listsCount");
 const loadingPage = ref(false);
 const tabmenu = ref("dashboard");
 const updateModel = (value) => {
@@ -145,6 +150,7 @@ const updateModel = (value) => {
     loadingPage.value = false;
   }, 1000);
 };
+
 onMounted(() => {
   let tab = getCookie("tabmenu");
   if (tab) tabmenu.value = tab;

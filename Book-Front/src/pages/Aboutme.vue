@@ -16,7 +16,7 @@ const getList = async () => {
 };
 
 const tab = ref("all");
-
+console.log(tab.value);
 onMounted(() => {
   getList();
 });
@@ -38,8 +38,8 @@ const getTheme = (e) => {
                 <banner></banner>
               </div>
             </div>
-            <div>
-              <Gallary-items :cateId="null"></Gallary-items>
+            <div class="d-flex justify-center w-100">
+              <v-img width="1000" src="/src/assets/our_story.jpg" cover rounded="lg"></v-img>
             </div>
           </div>
         </v-container>

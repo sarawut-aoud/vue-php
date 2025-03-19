@@ -85,7 +85,7 @@
             <v-card-action>
              
               <template v-if="options?.status == 'pending'">
-                <QrCode :order="order_number"></QrCode>
+                <QrCode :order="order_number" :load-data="getOrderPayment"></QrCode>
               </template>
             </v-card-action>
           </v-card>
@@ -135,6 +135,7 @@ const getOrderPayment = async () => {
   options.value = data?.options;
   setTimeout(() => {
     loadingOrder.value = false;
+    
   }, 500);
 };
 onMounted(() => {

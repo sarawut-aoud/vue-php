@@ -33,7 +33,10 @@
                   class="border rounded-lg"
                   :src="'/api/assets/delivery.jpg'"
                 ></v-img>
-                <div class="w-100 ms-5">ไปรษณีย์ไทย</div>
+                <div class="w-100 ms-5">
+                  <div>ไปรษณีย์ไทย</div>
+                  <div style="font-size: 12px;" class="text-grey-darken-1">ค่าส่งเริ่มต้น 35 บาท</div>
+                </div>
               </div>
               <div class="d-flex align-center ga-2">
                 <v-img

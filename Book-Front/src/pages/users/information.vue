@@ -7,8 +7,8 @@
           <v-card falt width="auto" rounded="lg">
             <v-tabs v-model="tabs" color="brown-darken-1">
               <v-tab value="info">ข้อมูลส่วนตัว</v-tab>
-              <v-tab value="address">ที่อยู่จัดส่ง</v-tab>
-              <v-tab value="setting">ตั้งค่าส่วนตัว</v-tab>
+              <v-tab v-if="false" value="address">ที่อยู่จัดส่ง</v-tab>
+              <v-tab v-if="false" value="setting">ตั้งค่าส่วนตัว</v-tab>
             </v-tabs>
             <v-card>
               <v-card-text>

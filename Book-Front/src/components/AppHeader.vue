@@ -1,16 +1,24 @@
 <template>
   <v-app-bar>
     <v-app-bar-title style="margin-inline-start: 0 !important">
-      <Router-custom :theme="themes" :path="'/'">
-        <template #default>
-          <div class="d-flex ga-3 align-center">
-            <div style="width: 100px">
-              <v-img :src="'/api/assets/images/logo_1.jpg'" class="w-100"></v-img>
+      <div class="d-flex ga-3 align-center">
+        <Router-custom :theme="themes" :path="'/'">
+          <template #default>
+            <div class="d-flex ga-3 align-center">
+              <div style="width: 100px">
+                <v-img :src="'/api/assets/images/logo_1.jpg'" class="w-100"></v-img>
+              </div>
+              <div class="" style="width: fit-content">Reread</div>
             </div>
-            <div class="" style="width: fit-content">Reread</div>
-          </div>
-        </template>
-      </Router-custom>
+          </template>
+        </Router-custom>
+        <v-divider inset vertical></v-divider>
+        <Router-custom :theme="themes" :path="'/about'">
+          <template #default>
+            <div class="" style="width: fit-content">About</div>
+          </template>
+        </Router-custom>
+      </div>
     </v-app-bar-title>
     <div class="me-2 d-flex ga-4 align-center">
       <template v-if="!is_login">
@@ -110,7 +118,9 @@
                 <v-icon icon="mdi-cart" color="brown-darken-1" size="large"></v-icon>
               </v-badge>
             </template>
-            <template v-else><v-icon icon="mdi-cart" color="brown-darken-1" size="large"></v-icon></template>
+            <template v-else
+              ><v-icon icon="mdi-cart" color="brown-darken-1" size="large"></v-icon
+            ></template>
           </v-btn>
         </div>
       </template>

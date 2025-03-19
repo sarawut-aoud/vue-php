@@ -9,7 +9,7 @@ class Upload_model extends MY_Model
     {
 
         if (!$path) $uploadPath = './assets/uploads/';
-        if ($path)   $uploadPath = './assets/' . $uploadPath . '/';
+        if ($path)   $uploadPath = './assets/' . $path . '/';
         $uploadedFiles = [];
         if (!empty($_FILES['images']['name'])) {
             // เช็กว่าไฟล์อัปโหลดไปที่ assets จริงไหม

@@ -48,17 +48,40 @@ const getCountCart = async () => {
     } else {
       cartCount.value = 0;
     }
-    document.getElementsByTagName("title")[0].innerHTML = `${text} ReRead`;
+    if (globalitem.value.n == "emp") {
+      document.getElementsByTagName("title")[0].innerHTML = `${text} ReRead`;
+    }
   }
 };
-
+const listsCount = ref(0);
+const getHistory = async () => {
+  listsCount.value = 0;
+  if (globalitem.value.n == "emp") return;
+  await api
+    .get("/api/orders/getHistorys")
+    .then((rs) => {
+      return rs.data;
+    })
+    .then((result) => {
+      if (result?.data.length > 0) {
+     
+        listsCount.value = result.data.filter((e) => e.status == "paid").length;
+      }
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+};
 provide("_getInfo", getInfo);
 provide("getCountCart", getCountCart);
 provide("cartCount", cartCount);
+provide("listsCount", listsCount);
+provide("getlistsCount", getHistory);
 
 onMounted(() => {
   getInfo();
   getCountCart();
+  getHistory();
 });
 </script>
 
@@ -79,5 +102,8 @@ onMounted(() => {
 }
 body .v-main {
   background: #daad76 !important;
+}
+.swal2-container {
+  z-index: 9999999999999999;
 }
 </style>

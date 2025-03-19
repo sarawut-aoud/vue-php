@@ -18,6 +18,7 @@ import Register from '@/pages/auth/register.vue';
 import Information from '@/pages/users/information.vue';
 import Payments from '@/pages/users/Payments.vue';
 import Historys from '@/pages/users/history.vue';
+import Aboutme from '@/pages/Aboutme.vue';
 
 const {getCookie} = useCookie();
 const {getItem} = useJWT();
@@ -30,6 +31,11 @@ const router = createRouter({
       path:'/',
       component:Index,
       name:"Home"
+    },
+    {
+      path:'/about',
+      component:Aboutme,
+      name:"About"
     },
     {
       path:'/login',component:Login,

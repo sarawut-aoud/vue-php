@@ -3,6 +3,8 @@ import { ref, defineProps, onMounted, inject } from "vue";
 import { useJWT } from "@/composables/useJWT";
 import { useCookie } from "@/composables/useCookie";
 import api from "/utils/axios";
+import { Notivue, Notification, push } from "notivue";
+
 const { getCookie } = useCookie();
 const { getItem } = useJWT();
 const globalitem = ref(getItem(getCookie("jwt")));
@@ -13,13 +15,11 @@ const props = defineProps({
     type: String,
     require: false,
   },
+  dialog: Array,
+  loadData: Function,
 });
 
 const qrcode = ref(null);
-
-const getSetting = async () => {
-  let { data } = await api.get("/api/SettingQR/getSetting");
-};
 
 const selectedFiles = ref([]);
 const fileInput = ref(null);
@@ -48,11 +48,46 @@ const openFilePicker = () => {
   fileInput.value.click();
 };
 const loadingUpload = ref(false);
+const payment_method = ref(null);
+
 const clickUpload = async () => {
   loadingUpload.value = true;
-
-  setTimeout(() => {
+  if (!selectedFiles.value) return;
+  const files = selectedFiles.value.map((e) => e.file);
+  const formData = new FormData();
+  if (!payment_method.value) {
+    Swal.fire({
+      title: "เลือกวิธีการชำระก่อน !!!",
+      icon: "error",
+      draggable: true,
+    });
     loadingUpload.value = false;
+    return;
+  }
+
+  formData.append(`images[]`, files[0]);
+  formData.append("id", options.value?.id);
+  formData.append("payment_method", payment_method.value);
+  formData.append("csrf_token_ci_gen", getCookie("csrf_cookie_ci_gen"));
+  try {
+    const response = await api.post("/api/orders/paymentPaid", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log("Upload success:", response.data);
+    push.success("ยืนยันคำสั่งซื้อสำเร็จ!");
+    getOrderPayment();
+  } catch (error) {
+    console.error("Upload failed:", error);
+    push.error("เกิดข้อผิดพลาดในการอัปโหลด");
+  }
+  setTimeout(async () => {
+    loadingUpload.value = false;
+    if (props.dialog.value) props.dialog.value = false;
+
+    await props.loadData();
   }, 300);
 };
 
@@ -66,11 +101,15 @@ const getOrderPayment = async () => {
     },
   });
   options.value = data?.options;
-  setTimeout(() => {
+  setTimeout(async () => {
     loadingOrder.value = false;
+    await props.loadData();
   }, 500);
 };
-
+const itemMethod = ref([
+  { title: "Qr-Code Promtpay", value: "promtpay" },
+  // { title: "โอนชำระผ่านธนาคาร", value: "bank_tranfer" },
+]);
 onMounted(() => {
   getSetting();
   getOrderPayment();
@@ -78,22 +117,46 @@ onMounted(() => {
 </script>
 <template>
   <div class="d-flex ga-2 w-100 pa-2">
-    <div class="w-100 d-flex flex-column">
-      <div class="text-h5 text-center">QR-Code สำหรับชำระเงิน</div>
-      <div style="width: 500px" class="mx-auto">
-        <v-img cover src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
+    <div class="w-100 d-flex flex-column justify-start">
+      <div class="text-h5 text-center">เลือกวิธีการชำระเงิน</div>
+      <div>
+        <v-select
+          v-model="payment_method"
+          :items="itemMethod"
+          variant="solo"
+          density="comfortable"
+          placeholder="เลือกวิธีการชำระเงิน"
+        ></v-select>
       </div>
+
+      <template v-if="payment_method == 'promtpay'">
+        <div style="width: 500px" class="mx-auto">
+          <v-img cover src="/src/assets/IMG_2027.png"></v-img>
+        </div>
+      </template>
+      <template v-if="payment_method == 'bank_tranfer'"> </template>
     </div>
 
     <div class="w-100 d-flex flex-column">
       <div class="d-flex flex-column align-end ga-2 w-100 pa-2 text-h5">
         <div class="d-flex justify-space-between w-100">
+          <div class="w-100">รวมราคาสินค้า</div>
+          <div class="w-100 text-end">{{ options?.total_price }} บาท</div>
+        </div>
+        <div class="d-flex justify-space-between w-100">
           <div class="w-100">รวมส่วนลด</div>
           <div class="w-100 text-end">{{ options?.discount }} บาท</div>
         </div>
         <div class="d-flex justify-space-between w-100">
+          <div class="w-100">ค่าจัดส่ง</div>
+          <div class="w-100 text-end">{{ options?.delivery_amount }} บาท</div>
+        </div>
+
+        <div class="d-flex justify-space-between w-100">
           <div class="w-100">รวมราคาสุทธิ</div>
-          <div class="w-100 text-end">{{ options?.total_price }} บาท</div>
+          <div class="w-100 text-end">
+            {{ options?.total_price + options?.delivery_amount }} บาท
+          </div>
         </div>
       </div>
       <v-divider class="w-100"></v-divider>
@@ -140,6 +203,9 @@ onMounted(() => {
       >ยืนยันการชำระเงิน</v-btn
     >
   </div>
+  <Notivue v-slot="item">
+    <Notification :item="item" />
+  </Notivue>
 </template>
 <style lang="scss" scoped>
 .upload-slip {

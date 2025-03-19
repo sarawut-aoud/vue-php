@@ -38,11 +38,13 @@
             </div>
             <v-data-table :headers="headers" :items="productsList" :search="search">
               <template v-slot:item.picture="{ item }">
-                <template v-for="(i, index) in item.picture">
-                  <template v-if="index <= 2">
-                    <v-avatar :image="i.path" :data-image="i.path" size="50"></v-avatar>
+                <div class="d-flex ga-1 align-center">
+                  <template v-for="(i, index) in item.picture">
+                    <template v-if="index <= 2">
+                      <v-avatar :image="i.path" :data-image="i.path" size="50"></v-avatar>
+                    </template>
                   </template>
-                </template>
+                </div>
               </template>
               <template v-slot:item.manage="{ item }">
                 <div class="d-flex align-center ga-2">
@@ -104,7 +106,16 @@
                     color="red"
                   ></v-btn>
                   <v-divider inset vertical></v-divider>
-                  <v-btn rounded="lg" variant="outlined" color="red">SOLD OUT</v-btn>
+                  <div class="d-flex flex-column ga-1 align-center">
+                    <v-btn
+                      @click="updateSoldOut(item._i)"
+                      rounded="lg"
+                      variant="outlined"
+                      color="red"
+                      >SOLD OUT
+                    </v-btn>
+                    <small v-if="item.sold_out"> <v-chip color="brown-darken-1" size="small">กำลังติดสถานะ SOLD OUT</v-chip></small>
+                  </div>
                 </div>
               </template>
             </v-data-table>
@@ -181,7 +192,7 @@
             :rules="numberRules"
             variant="solo"
           ></v-text-field>
-          <UploadImage ref="uploadRef" />
+          <UploadImage ref="uploadRef" :existingImages="temp" />
         </div>
       </v-card-text>
       <template v-slot:actions>
@@ -198,6 +209,7 @@
           variant="flat"
           color="success"
           text="บันทึกแก้ไขรายการ"
+          @click="update"
         ></v-btn>
       </template>
     </v-card>
@@ -335,11 +347,81 @@ const uploadImage = async (id) => {
     push.error("เกิดข้อผิดพลาดในการอัปโหลด");
   }
 };
-const getProductByid = async () => {
-  dialog.value =true
+const temp = ref([]);
+const p_id = ref(null);
+const getProductByid = async (id) => {
+  dialog.value = true;
+  is_update.value = true;
+  p_id.value = id;
+  let { data } = await api.get("/api/products/getList/" + id);
+  if (data?.data) {
+    let rs = data.data;
+    product_no.value = rs.no;
+    product_name.value = rs.name;
+    product_detail.value = rs.detail;
+    numberValue.value = rs.price;
+    cate_id.value = rs.cate_id.map((e) => e._i);
+    temp.value = rs.picture;
+  }
+};
 
- 
+const update = async () => {
+  Swal.fire({
+    title: "ยืนยันการแก้ไขข้อมูล ?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "ตกลง",
+    cancelButtonText: "ยกเลิก",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      if (!uploadRef.value) return;
+      const files = uploadRef.value.getFiles(); // เรียก getFiles() จาก UploadImage.vue
 
+      if (!product_no.value) {
+        push.error("กรุณากรอกรหัสหนังสือ");
+        return;
+      }
+      if (!product_name.value) {
+        push.error("กรุณากรอกชื่อรายหนังสือ");
+        return;
+      }
+      if (!numberValue.value) {
+        push.error("กรุณากรอกราคาหนังสือ");
+        return;
+      }
+
+      const formData = new FormData();
+
+      formData.append("p_id", p_id.value);
+      formData.append("no", product_no.value);
+      formData.append("name", product_name.value);
+      formData.append("detail", product_detail.value);
+      formData.append("price", numberValue.value);
+      formData.append("cate_id", cate_id.value);
+
+      files.forEach((file, index) => {
+        formData.append(`images[]`, file);
+      });
+      formData.append("csrf_token_ci_gen", getCookie("csrf_cookie_ci_gen"));
+      try {
+        const response = await api.post("/api/products/update", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        console.log("Upload success:", response.data);
+        push.success("บันทึกข้อมูลสำเร็จ!");
+        resetData();
+        loadData();
+      } catch (error) {
+        console.error("Upload failed:", error);
+        push.error("เกิดข้อผิดพลาดในการอัปโหลด");
+      }
+    }
+  });
 };
 const remove = async (id) => {
   Swal.fire({
@@ -375,6 +457,8 @@ const resetData = (value) => {
   product_detail.value = null;
   numberValue.value = null;
   cate_id.value = [];
+  temp.value = [];
+  p_id.value = null;
 };
 const productsList = ref([]);
 const getListProduct = async () => {
@@ -384,6 +468,35 @@ const getListProduct = async () => {
     productsList.value = data.data;
   }
 };
+
+const updateSoldOut = async (id) => {
+  Swal.fire({
+    title: "ต้องการเปลี่ยนสถานะสินค้า ?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "ตกลง",
+    cancelButtonText: "ยกเลิก",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      let { data } = await api
+        .post("/api/products/updateSoldOut/" + id, {
+          csrf_token_ci_gen: getCookie("csrf_cookie_ci_gen"),
+        })
+        .then((result) => {
+          return result.data;
+        })
+        .then((data) => {
+          if (data.status) {
+            push.success("ปรับสถานะสำเร็จ");
+            getListProduct();
+          }
+        });
+    }
+  });
+};
+
 const loadData = () => {
   getList();
   getListProduct();

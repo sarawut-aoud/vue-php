@@ -21,8 +21,41 @@
           <template #default> #{{ item.order_number }} </template>
         </router-custom>
       </template>
+      <template v-slot:item.payment.picture="{ item }">
+        <v-menu :close-on-content-click="false" location="end">
+          <template v-slot:activator="{ props }">
+            <div class="d-flex justify-center pa-2 w-100">
+              <div style="width: 100px">
+                <v-img v-bind="props" :src="item.payment.picture" width="50"></v-img>
+              </div>
+            </div>
+          </template>
+
+          <v-card min-width="600">
+            <v-img v-bind="props" :src="item.payment.picture" cover width="800"></v-img>
+          </v-card>
+        </v-menu>
+      </template>
       <template v-slot:item.manage="{ item }">
-        <div class="d-flex ga-2 align-center justify-center"></div>
+        <div class="d-flex ga-2 align-center justify-center">
+          <template v-if="item.status == 'paid'">
+            <v-btn
+              @click="successOrder(item._i)"
+              prepend-icon="mdi-check-circle"
+              variant="outlined"
+              color="success"
+              >ยืนยันการชำระเงิน</v-btn
+            >
+            <v-btn
+              variant="outlined"
+              color="red"
+              @click="cancelOrder(item._i)"
+              :loading="loading_btn_cancel"
+              :disabled="loading_btn_cancel"
+              >ยกเลิกรายการ</v-btn
+            >
+          </template>
+        </div>
       </template>
     </v-data-table>
   </v-card>
@@ -32,16 +65,17 @@
   </Notivue>
 </template>
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import { Notivue, Notification, push } from "notivue";
 import { useJWT } from "@/composables/useJWT";
 import { useCookie } from "@/composables/useCookie";
 import api from "/utils/axios";
-import { fa } from "vuetify/locale";
 const { getItem } = useJWT();
 const { getCookie } = useCookie();
 const globalitem = ref(getItem(getCookie("jwt")));
 const theme = ref("light");
+
+
 const getTheme = (e) => {
   theme.value = e;
 };
@@ -54,7 +88,9 @@ const headers = ref([
     title: "เลขคำสั่งซื้อ",
   },
   { key: "date", title: "วันที่สั่งซื้อ" },
-  { align: "end", key: "total_price", title: "ยอดที่ต้องชำระ" },
+  { align: "center", key: "total_price", title: "ยอดที่ต้องชำระ" },
+  { align: "center", key: "payment.type", title: "ประเภทการชำระเงิน" },
+  { align: "center", key: "payment.picture", title: "หลักฐานการชำระเงิน" },
   { key: "manage", title: "" },
 ]);
 
@@ -82,7 +118,7 @@ const loading_btn_cancel = ref(false);
 const cancelOrder = async (id) => {
   loading_btn_cancel.value = true;
   let item = lists.value.filter((e) => e._i == id)[0];
-  console.log(item);
+  
   Swal.fire({
     title: `ต้องการยกเลิกคำสั่งซื้อเลขที่ #${item.order_number} หรือไม่ ?`,
     icon: "question",
@@ -112,7 +148,42 @@ const cancelOrder = async (id) => {
     }
   });
 };
-
+const getlistsCount = inject("getlistsCount");
+const loading_btn_success = ref(false);
+const successOrder = async (id) => {
+  loading_btn_success.value = true;
+  let item = lists.value.filter((e) => e._i == id)[0];
+  Swal.fire({
+    title: `ยืนยันการชำระเงินคำสั่งซื้อเลขที่ #${item.order_number} หรือไม่ ?`,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "ตกลง",
+    cancelButtonText: "ยกเลิก",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      await api
+        .post("/api/orders/successOrder/" + id, {
+          csrf_token_ci_gen: getCookie("csrf_cookie_ci_gen"),
+        })
+        .then((r) => {
+          return r.data;
+        })
+        .then(async (result) => {
+          if (result.status) {
+            push.success("ทำรายการสำเร็จ");
+            loading_btn_success.value = false;
+            getHistory();
+            getlistsCount();
+          
+          }
+        });
+    } else {
+      loading_btn_success.value = false;
+    }
+  });
+};
 onMounted(() => {
   getHistory();
 });

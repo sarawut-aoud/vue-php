@@ -53,7 +53,7 @@
 
                       <template v-slot:default="{ isActive }">
                         <v-card title="แนบหลักฐานการชำระเงิน" rounded="lg">
-                          <qr-code :order="item.order_number"></qr-code>
+                          <qr-code :order="item.order_number" :dialog="isActive" :load-data="getHistory"></qr-code>
                         </v-card>
                       </template>
                     </v-dialog>
@@ -127,6 +127,7 @@ const getHistory = async () => {
     });
   loadingtbl.value = false;
 };
+
 const loading_btn_cancel = ref(false);
 const cancelOrder = async (id) => {
   loading_btn_cancel.value = true;
