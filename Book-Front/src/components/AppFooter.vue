@@ -1,10 +1,10 @@
 <template>
   <v-footer border>
     <div class="d-flex ga-2 align-start w-100 flex-column px-10 pt-5">
-      <div v-if="user" class="d-flex w-100 ga-2 align-start">
+      <div v-if="user" class="d-xl-flex w-100 ga-2 align-start ">
         <div class="d-flex ga-2 w-100 flex-column">
           <div>ช่องทางการชำระเงิน / Delivery</div>
-          <div class="d-flex ga-10">
+          <div class="d-xl-flex ga-10">
             <div class="d-flex flex-column ga-2">
               <div class="d-flex align-center">
                 <v-img
@@ -61,7 +61,7 @@
             </div>
           </div>
         </div>
-        <div class="d-flex ga-2 w-100 flex-column">
+        <div class="d-flex ga-2 w-100 flex-column mt-2">
           <div>ติดตามข่าวสารได้ที่</div>
           <div class="d-flex flex-column ga-2">
             <div class="d-flex align-center">
@@ -106,7 +106,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, } from "vue";
 import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useCookie } from "@/composables/useCookie";
 import { useJWT } from "@/composables/useJWT";

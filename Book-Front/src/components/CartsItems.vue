@@ -124,7 +124,7 @@
   </v-navigation-drawer>
 </template>
 <script setup>
-import { defineProps, onMounted, ref, watch, inject } from "vue";
+import { defineProps, onMounted, ref, watch, inject ,watchEffect} from "vue";
 import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useCookie } from "@/composables/useCookie";
 import { useJWT } from "@/composables/useJWT";
@@ -188,7 +188,7 @@ const pushCart = async (id, increase = 1) => {
       }
     });
 };
-watch(() => {
+watchEffect(() => {
   localCarts.value = false;
   if (props.carts) {
     localCarts.value = props.carts;
@@ -200,7 +200,7 @@ const sum_discount = ref(0);
 const sum_total = ref(0);
 const order_id_group = ref([]);
 
-watch(() => {
+watchEffect(() => {
   sum_price.value = 0;
   sum_total.value = 0;
   sum_discount.value = 0;

@@ -132,7 +132,7 @@
   </Notivue>
 </template>
 <script setup>
-import { ref, inject, watch, onMounted, provide } from "vue";
+import { ref, inject, watch, onMounted, provide ,watchEffect} from "vue";
 import CartsItems from "@/components/CartsItems.vue";
 import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useCookie } from "@/composables/useCookie";
@@ -165,7 +165,7 @@ const logout = async () => {
     window.location.href = "";
   }, 1000);
 };
-watch(() => {
+watchEffect(() => {
   if (!globalitem.value?.ui) {
     deleteItem("userToken");
     deleteCookie("jwt");

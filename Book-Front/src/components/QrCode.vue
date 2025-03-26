@@ -15,11 +15,14 @@ const props = defineProps({
     type: String,
     require: false,
   },
-  dialog: Array,
+  dialog:{
+    type:Object,
+    require:false,
+    default:null,
+  },
   loadData: Function,
 });
 
-const qrcode = ref(null);
 
 const selectedFiles = ref([]);
 const fileInput = ref(null);
@@ -49,7 +52,7 @@ const openFilePicker = () => {
 };
 const loadingUpload = ref(false);
 const payment_method = ref(null);
-
+const address = ref(null)
 const clickUpload = async () => {
   loadingUpload.value = true;
   if (!selectedFiles.value) return;
@@ -64,10 +67,20 @@ const clickUpload = async () => {
     loadingUpload.value = false;
     return;
   }
+  if (!address.value) {
+    Swal.fire({
+      title: "กรุณากรอกที่อยู่จัดส่ง",
+      icon: "error",
+      draggable: true,
+    });
+    loadingUpload.value = false;
+    return;
+  }
 
   formData.append(`images[]`, files[0]);
   formData.append("id", options.value?.id);
   formData.append("payment_method", payment_method.value);
+  formData.append("address", address.value);
   formData.append("csrf_token_ci_gen", getCookie("csrf_cookie_ci_gen"));
   try {
     const response = await api.post("/api/orders/paymentPaid", formData, {
@@ -85,7 +98,8 @@ const clickUpload = async () => {
   }
   setTimeout(async () => {
     loadingUpload.value = false;
-    if (props.dialog.value) props.dialog.value = false;
+   
+    // if (props.dialog.value) props.dialog.value = false;
 
     await props.loadData();
   }, 300);
@@ -103,7 +117,9 @@ const getOrderPayment = async () => {
   options.value = data?.options;
   setTimeout(async () => {
     loadingOrder.value = false;
-    await props.loadData();
+    if(!props.dialog){
+      await props.loadData();
+    }
   }, 500);
 };
 const itemMethod = ref([
@@ -111,12 +127,11 @@ const itemMethod = ref([
   // { title: "โอนชำระผ่านธนาคาร", value: "bank_tranfer" },
 ]);
 onMounted(() => {
-  getSetting();
   getOrderPayment();
 });
 </script>
 <template>
-  <div class="d-flex ga-2 w-100 pa-2">
+  <div class=" ga-2 w-100 pa-2  d-xl-flex">
     <div class="w-100 d-flex flex-column justify-start">
       <div class="text-h5 text-center">เลือกวิธีการชำระเงิน</div>
       <div>
@@ -130,8 +145,8 @@ onMounted(() => {
       </div>
 
       <template v-if="payment_method == 'promtpay'">
-        <div style="width: 500px" class="mx-auto">
-          <v-img cover src="/src/assets/IMG_2027.png"></v-img>
+        <div style="width: 500px"  class="mx-auto">
+          <v-img  height="400" src="/src/assets/IMG_2027.png"></v-img>
         </div>
       </template>
       <template v-if="payment_method == 'bank_tranfer'"> </template>
@@ -193,6 +208,12 @@ onMounted(() => {
       </template>
     </div>
   </div>
+  <div class="pa-2">
+    <div>ที่อยู่จัดส่งสินค้า <span style="color: red;">*</span></div>
+    <v-textarea v-model="address" variant="solo" placeholder="ระบุที่อยู่จัดส่งสินค้า"></v-textarea>
+  </div>
+  <v-divider class="w-100"></v-divider>
+
   <div class="pa-2 d-flex justify-end">
     <v-btn
       color="success"

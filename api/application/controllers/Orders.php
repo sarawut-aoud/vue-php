@@ -65,8 +65,8 @@ class Orders extends RestAPI
 
 
             self::setRes($result, 200, [
-                'delivery' => $quantity* $cost,
-                'amount' => $quantity ,
+                'delivery' => $quantity * $cost,
+                'amount' => $quantity,
             ]);
         } catch (Exception $e) {
             self::sendResponse($e, __METHOD__);
@@ -222,6 +222,7 @@ class Orders extends RestAPI
                 $payment = [
                     'picture' => '/api' . substr($payment->picture, 1),
                     'type' => $payment->payment_method,
+                    'address' => $payment->address,
                 ];
                 return [
                     '_i' => (int)$e->id,
@@ -231,7 +232,7 @@ class Orders extends RestAPI
                     'order_number' => $e->order_number,
                     'date' => date('d-M-Y', strtotime($e->created_at)),
                     'status' => $e->status,
-                    'payment' => $this->login == 'emp' ? null : $payment
+                    'payment' => $this->login == 'emp' ? null : $payment,
                 ];
             }, $result);
             self::setRes($result, 200);
@@ -346,7 +347,8 @@ class Orders extends RestAPI
                 'pd_id' => $this->pd_id,
                 'order_id' => $req->id,
                 'payment_method' => $req->payment_method,
-                'picture' => $files[0]
+                'picture' => $files[0],
+                'address' => $req->address ?? null
             ];
 
             $this->db->insert('swtar_reread.payments', $data);

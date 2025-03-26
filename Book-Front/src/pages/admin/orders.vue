@@ -36,6 +36,27 @@
           </v-card>
         </v-menu>
       </template>
+      <template #item.payment.address="{ item }">
+        <v-menu :close-on-content-click="false" location="end">
+          <template v-slot:activator="{ props }">
+            <div
+              v-bind="props"
+              style="
+                width: 100px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+              "
+            >
+              {{ item.payment.address }}
+            </div>
+          </template>
+
+          <v-card min-width="300" class="pa-3" rounded="lg">
+            <div>{{ item.payment.address }}</div>
+          </v-card>
+        </v-menu>
+      </template>
       <template v-slot:item.manage="{ item }">
         <div class="d-flex ga-2 align-center justify-center">
           <template v-if="item.status == 'paid'">
@@ -75,7 +96,6 @@ const { getCookie } = useCookie();
 const globalitem = ref(getItem(getCookie("jwt")));
 const theme = ref("light");
 
-
 const getTheme = (e) => {
   theme.value = e;
 };
@@ -91,6 +111,7 @@ const headers = ref([
   { align: "center", key: "total_price", title: "ยอดที่ต้องชำระ" },
   { align: "center", key: "payment.type", title: "ประเภทการชำระเงิน" },
   { align: "center", key: "payment.picture", title: "หลักฐานการชำระเงิน" },
+  { align: "center", key: "payment.address", title: "ที่อยู่จัดส่ง" },
   { key: "manage", title: "" },
 ]);
 
@@ -118,7 +139,7 @@ const loading_btn_cancel = ref(false);
 const cancelOrder = async (id) => {
   loading_btn_cancel.value = true;
   let item = lists.value.filter((e) => e._i == id)[0];
-  
+
   Swal.fire({
     title: `ต้องการยกเลิกคำสั่งซื้อเลขที่ #${item.order_number} หรือไม่ ?`,
     icon: "question",
@@ -176,7 +197,6 @@ const successOrder = async (id) => {
             loading_btn_success.value = false;
             getHistory();
             getlistsCount();
-          
           }
         });
     } else {
